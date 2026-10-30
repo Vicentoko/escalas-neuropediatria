@@ -20,12 +20,13 @@
   --ok:#1F6B3F; --ok-soft:#E6F4EC; --warn:#7A5A00; --warn-soft:#FBF1D2; --bad:#C53030; --bad-soft:#FDECEC;
   --display:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --body:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --mono:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --mono:var(--body);
   color-scheme:light;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+a{color:var(--accent)}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-variant-numeric:tabular-nums;font-size:16px;line-height:1.5}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
 .wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -51,7 +52,8 @@ h2{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:0;text-wra
 .opts{display:flex;flex-direction:column;gap:4px}
 .opt{display:grid;grid-template-columns:2.2em 1fr;gap:8px;align-items:start;padding:6px 8px;border-radius:7px;border:1px solid transparent;cursor:pointer}
 .opt:hover{background:var(--bg)}
-.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt{position:relative}
+.opt input{position:absolute;left:0;top:0;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}
 .opt .n{font-family:var(--mono);text-align:center;border:1px solid var(--line);border-radius:6px;font-size:.85rem;padding-block:1px}
 .opt:has(input:checked){background:var(--accent-soft);border-color:var(--accent)}
 .opt:has(input:checked) .n{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
@@ -61,14 +63,15 @@ h2{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:0;text-wra
 .side-l{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
 .seg{display:flex;flex-wrap:wrap;gap:4px}
 .seg label{cursor:pointer}
-.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{position:relative}
+.seg input{position:absolute;left:0;top:0;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}
 .field .seg label{text-transform:none;letter-spacing:0;font-size:.95rem;color:var(--ink)}
 .seg span{display:inline-block;min-width:2.4em;text-align:center;font-variant-numeric:tabular-nums;padding:4px 8px;border:1px solid var(--line);border-radius:6px}
 .seg input:checked+span{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:1px}
 .result{position:sticky;bottom:0;z-index:4;background:var(--surface);border-top:1px solid var(--line);margin-top:18px;padding-bottom:env(safe-area-inset-bottom,0px)}
 .result .wrap{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding-block:10px}
-.total{font-family:var(--mono);font-size:1.4rem}
+.total{font-family:var(--mono);font-size:1.4rem;font-weight:700}
 .total small{font-size:.8rem;color:var(--muted)}
 .pill{font-size:.85rem;padding:3px 10px;border-radius:999px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
 .pill.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
@@ -85,13 +88,27 @@ button:focus-visible,input:focus-visible,select:focus-visible,nav a:focus-visibl
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .row .field{flex:1 1 90px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.search{position:relative;margin-bottom:16px}
+.search input{font:inherit;font-size:1rem;width:100%;padding:11px 14px 11px 40px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted)}
+details.cat{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+details.cat>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 16px;font-weight:700;font-size:1.05rem;color:var(--accent)}
+details.cat>summary::-webkit-details-marker{display:none}
+details.cat>summary .c{margin-left:auto;font-weight:400;font-size:.85rem;color:var(--muted)}
+details.cat>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:-4px 4px 0 6px;transition:transform .15s}
+details.cat[open]>summary::after{transform:rotate(-135deg);margin-top:4px}
+details.cat>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:12px}
+details.cat .tiles{padding:0 12px 12px}
+details.cat .tile{background:var(--bg);border-color:transparent}
+details.cat .tile:hover{border-color:var(--accent)}
+.empty{color:var(--muted);padding:12px 4px}
 .grp{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:10px 0 0}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:4px}
 .tile:hover{border-color:var(--accent)}
 .tile b{font-family:var(--display);font-weight:600;font-size:1.05rem}
 .tile span{color:var(--muted);font-size:.88rem}
 .ref{border-left:3px solid var(--line);padding-left:10px;color:var(--muted);font-size:.85rem}
-.big{font-family:var(--mono);font-size:1.8rem;line-height:1.1}
+.big{font-family:var(--mono);font-size:1.8rem;font-weight:700;line-height:1.1}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:.92rem}
 .kv dt{color:var(--muted)} .kv dd{margin:0;font-family:var(--mono)}
 .chart{overflow-x:auto} .chart svg{display:block;width:100%;height:auto;min-width:300px}
@@ -304,8 +321,37 @@ function viewHome(){
   ];
   $("#view").innerHTML = `<div class="hero"><svg viewBox="0 0 100 100" width="88" height="88" aria-hidden="true"><g fill="none" stroke="#14485A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" fill="#FF7A59"/></svg><span class="k">escalas de</span><span class="w">neuropediatría</span><span class="t">Neuropediatría · Universidad de Valparaíso</span></div>
   <p class="lede">Calculadoras para la consulta. Elija una escala; al terminar use <b>Copiar resumen</b> para pegarlo en la ficha clínica.</p>
-  <div class="stack" style="gap:22px">${CATS.map(([c,ks])=>`<section><h2 class="grp" style="margin-top:0">${c}</h2><div class="tiles">${ks.map(k=>`<a class="tile" href="#${k}"><b>${T[k][0]}</b><span>${T[k][1]}</span></a>`).join("")}</div></section>`).join("")}</div>`;
+  <div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Buscar (ej. ataxia, tics, prematuro)" aria-label="Buscar escala" autocomplete="off" value="${esc(ST.q||"")}"></div>
+  <div id="cats"></div>`;
+  const tile = k => `<a class="tile" href="#${k}"><b>${T[k][0]}</b><span>${T[k][1]}</span></a>`;
+  const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  let open; try { open = JSON.parse(localStorage.getItem("cats-open")||"null"); } catch(e){}
+  if(!Array.isArray(open)) open = [CATS[0][0]];
+  const draw = () => {
+    const q = norm(ST.q||"").trim();
+    if(q){
+      const hits = Object.keys(T).filter(k => q.split(/\s+/).every(w => norm(T[k].join(" ")+" "+(KW[k]||"")+" "+CATS.filter(c=>c[1].includes(k)).map(c=>c[0]).join(" ")).includes(w)));
+      $("#cats").innerHTML = hits.length ? `<div class="tiles">${hits.map(tile).join("")}</div>` : `<p class="empty">No hay escalas que coincidan con "${esc(ST.q)}".</p>`;
+      return;
+    }
+    $("#cats").innerHTML = `<div class="stack">${CATS.map(([c,ks])=>`<details class="cat" ${open.includes(c)?"open":""} data-c="${c}"><summary>${c}<span class="c">${ks.length}</span></summary><div class="tiles">${ks.map(tile).join("")}</div></details>`).join("")}</div>`;
+    document.querySelectorAll("details.cat").forEach(d=>d.addEventListener("toggle",()=>{
+      open = [...document.querySelectorAll("details.cat[open]")].map(x=>x.dataset.c);
+      try { localStorage.setItem("cats-open", JSON.stringify(open)); } catch(e){}
+    }));
+  };
+  $("#q").addEventListener("input", e => { ST.q = e.target.value; draw(); });
+  draw();
 }
+const KW = {
+  edad:"prematuro pretermino edad gestacional postmenstrual", pcrn:"perimetro cefalico circunferencia craneana microcefalia prematuro pretermino curva chilena intrauterino",
+  pc:"circunferencia craneana perimetro cefalico microcefalia macrocefalia oms who cdc percentil", bind:"ictericia hiperbilirrubinemia kernicterus bilirrubina",
+  finnegan:"abstinencia sindrome de abstinencia neonatal opioides drogas", sarnat:"asfixia encefalopatia hipoxico isquemica eihi hipotermia",
+  mchat:"autismo tea tamizaje desarrollo", gmfcs:"paralisis cerebral funcion motora gruesa", tardieu:"espasticidad paralisis cerebral toxina botulinica",
+  tono:"espasticidad tono fuerza ashworth mrc", sprs:"paraparesia espastica hereditaria peh hsp", sara:"ataxia cerebelo",
+  bfm:"distonia burke fahn marsden bfmdrs", ygtss:"tics tourette yale", pedmidas:"cefalea migrana jaqueca discapacidad", gcs:"glasgow coma conciencia tec trauma urgencia"
+};
 
 // ---------- escalas genéricas (SARA, SPRS, Glasgow) ----------
 function viewScale(id){
