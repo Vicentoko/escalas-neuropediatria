@@ -85,6 +85,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,nav a:focus-visibl
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .row .field{flex:1 1 90px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.grp{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:10px 0 0}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:4px}
 .tile:hover{border-color:var(--accent)}
 .tile b{font-family:var(--display);font-weight:600;font-size:1.05rem}
@@ -259,39 +260,55 @@ function bar(html){ const b=$("#bar"); if(!html){ b.hidden=true; return; } b.hid
 
 // ---------- navegación ----------
 const ROUTES = [
-  ["inicio","Inicio"],["pc","Perímetro craneano"],["pedmidas","PedMIDAS"],["sara","SARA"],
-  ["sprs","SPRS"],["gmfcs","GMFCS"],["mchat","M-CHAT-R"],["gcs","Glasgow"],["tono","Ashworth / MRC"]
+  ["inicio","Inicio"],["pc","Perímetro craneano"],["finnegan","Finnegan"],["sarnat","Sarnat"],["mchat","M-CHAT-R"],["gmfcs","GMFCS"],
+  ["tardieu","Tardieu"],["tono","Ashworth / MRC"],["sprs","SPRS"],["sara","SARA"],["bfm","Burke-Fahn-Marsden"],["ygtss","YGTSS"],
+  ["pedmidas","PedMIDAS"],["gcs","Glasgow"]
 ];
 function route(){
   const id = (location.hash||"#inicio").slice(1);
   const r = ROUTES.find(x=>x[0]===id) ? id : "inicio";
   $("#nav").innerHTML = ROUTES.map(([k,l])=>`<a href="#${k}" class="${k===r?"on":""}">${l}</a>`).join("");
   bar(null); $("#view").onchange=null; $("#view").oninput=null;
-  ({inicio:viewHome, pc:viewPC, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs}[r] || (()=>viewScale(r)))();
+  ({inicio:viewHome, pc:viewPC, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm}[r] || (()=>viewScale(r)))();
   window.scrollTo(0,0);
 }
 window.addEventListener("hashchange", route);
 
 function viewHome(){
-  const t = [
-    ["pc","Perímetro craneano","Puntaje z y percentil OMS (0–5 años) y CDC (0–36 meses), con edad corregida."],
-    ["pedmidas","PedMIDAS","Discapacidad por cefalea en los últimos 3 meses. Grados I–IV."],
-    ["sara","SARA","Ataxia, 8 ítems, 0–40 puntos."],
-    ["sprs","SPRS","Paraparesia espástica, 13 ítems, 0–52 puntos."],
-    ["gmfcs","GMFCS E&R","Nivel de función motora gruesa por franja de edad, I–V."],
-    ["mchat","M-CHAT-R","Puntuación del cuestionario de autismo 16–30 meses."],
-    ["gcs","Glasgow pediátrico","Versión lactante y niño, 3–15."],
-    ["tono","Ashworth modificada / MRC","Tablas de referencia de tono y fuerza."]
+  const T = {
+    pc:["Perímetro craneano","Puntaje z y percentil OMS (0–5 años) y CDC (0–36 meses), con edad corregida."],
+    finnegan:["Finnegan modificada","Abstinencia neonatal, con umbrales de tratamiento."],
+    sarnat:["Sarnat modificada","Encefalopatía hipóxico-isquémica y criterio neurológico de hipotermia."],
+    mchat:["M-CHAT-R","Puntuación del cuestionario de autismo, 16–30 meses."],
+    gmfcs:["GMFCS E&R","Función motora gruesa por franja de edad, niveles I–V."],
+    tardieu:["Tardieu modificada","Ángulos R1 y R2 y calidad de la reacción por músculo."],
+    tono:["Ashworth modificada / MRC","Tablas de referencia de tono y fuerza."],
+    sprs:["SPRS","Paraparesia espástica, 13 ítems, 0–52."],
+    sara:["SARA","Ataxia, 8 ítems, 0–40."],
+    bfm:["Burke-Fahn-Marsden","Distonía: movimiento 0–120 y discapacidad 0–30."],
+    ygtss:["YGTSS","Severidad de tics motores y fónicos, 0–100."],
+    pedmidas:["PedMIDAS","Discapacidad por cefalea en 3 meses, grados I–IV."],
+    gcs:["Glasgow pediátrico","Versión lactante y niño, 3–15."]
+  };
+  const CATS = [
+    ["Recién nacido",["finnegan","sarnat","pc"]],
+    ["Lactante y desarrollo",["pc","mchat","gmfcs"]],
+    ["Tono y función motora",["tardieu","tono","sprs","gmfcs"]],
+    ["Trastornos del movimiento",["bfm","ygtss","sara"]],
+    ["Cefalea",["pedmidas"]],
+    ["Urgencia",["gcs"]]
   ];
   $("#view").innerHTML = `<div class="hero"><svg viewBox="0 0 100 100" width="88" height="88" aria-hidden="true"><g fill="none" stroke="#14485A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" fill="#FF7A59"/></svg><span class="k">escalas de</span><span class="w">neuropediatría</span><span class="t">Neuropediatría · Universidad de Valparaíso</span></div>
   <p class="lede">Calculadoras para la consulta. Elija una escala; al terminar use <b>Copiar resumen</b> para pegarlo en la ficha clínica.</p>
-  <div class="tiles">${t.map(([k,n,d])=>`<a class="tile" href="#${k}"><b>${n}</b><span>${d}</span></a>`).join("")}</div>`;
+  <div class="stack" style="gap:22px">${CATS.map(([c,ks])=>`<section><h2 class="grp" style="margin-top:0">${c}</h2><div class="tiles">${ks.map(k=>`<a class="tile" href="#${k}"><b>${T[k][0]}</b><span>${T[k][1]}</span></a>`).join("")}</div></section>`).join("")}</div>`;
 }
 
 // ---------- escalas genéricas (SARA, SPRS, Glasgow) ----------
 function viewScale(id){
   const S = SCALES[id]; const st = ST[id] ||= {v:{}, age:"nino"};
-  const optsOf = it => it.opts.map((o,i)=> Array.isArray(o) ? {s:o[0], t:(st.age==="nino"?o[1]:o[2])} : {s:i, t:o});
+  const optsOf = it => it.opts.map((o,i)=> Array.isArray(o) ? {s:o[0], t:(o.length===2||st.age==="nino"?o[1]:o[2]), n:(it.labels||S.labels)?.[i] ?? o[0]} : {s:i, t:o, n:i});
+  if(S.defaultZero && !st.init){ S.items.forEach((it,k)=>{ st.v[k]=0; }); st.init=true; }
+  const MAX = S.max ?? S.items.reduce((a,it)=>a+Math.max(...it.opts.map((o,i)=>Array.isArray(o)?o[0]:i)),0);
   const agesel = S.ages ? `<div class="row" style="margin-bottom:12px">
       <div class="seg" role="radiogroup" aria-label="Edad">
       <label><input type="radio" name="age" value="nino" ${st.age==="nino"?"checked":""}><span>Niño ≥2 años</span></label>
@@ -306,9 +323,9 @@ function viewScale(id){
         <div class="sides">${seg("d")}${seg("i")}</div>
         <table class="t" style="margin-top:10px">${os.map(o=>`<tr><td>${o.s}</td><td>${esc(o.t)}</td></tr>`).join("")}</table></div>`;
     }
-    return `<div class="card"><div class="item-h"><h2>${k+1}. ${esc(it.name)}</h2><span class="sc" id="sc${k}"></span></div>
+    return `${it.group?`<h2 class="grp">${esc(it.group)}</h2>`:""}<div class="card"><div class="item-h"><h2>${k+1}. ${esc(it.name)}</h2><span class="sc" id="sc${k}"></span></div>
       ${it.hint?`<p class="hint">${esc(it.hint)}</p>`:""}
-      <div class="opts" role="radiogroup">${os.map(o=>`<label class="opt"><input type="radio" name="i${k}" value="${o.s}" ${st.v[k]===o.s?"checked":""}><span class="n">${o.s}</span><span>${esc(o.t)}</span></label>`).join("")}</div></div>`;
+      <div class="opts" role="radiogroup">${os.map(o=>`<label class="opt"><input type="radio" name="i${k}" value="${o.s}" ${st.v[k]===o.s?"checked":""}><span class="n">${o.n}</span><span>${esc(o.t)}</span></label>`).join("")}</div></div>`;
   }).join("");
   $("#view").innerHTML = `<h1>${S.title}</h1><p class="lede">${S.full}. ${S.lede}</p>${agesel}<div class="stack" id="items">${html}</div><p class="ref" style="margin-top:16px">${esc(S.ref)}</p>`;
   $("#view").onchange = e => {
@@ -325,16 +342,19 @@ function viewScale(id){
   function update(){
     let tot=0, n=0;
     S.items.forEach((it,k)=>{ const s=itemScore(k); $("#sc"+k).textContent = s==null?"":fmtN(s); if(s!=null){tot+=s;n++;} });
-    const all = n===S.items.length, I = S.interpret(tot);
-    bar(`<span class="total num">${fmtN(tot)}<small> / ${S.max}</small></span>
+    const sc = S.items.map((it,k)=>itemScore(k));
+    const all = n===S.items.length, I = all ? S.interpret(tot, sc) : null;
+    bar(`${S.noTotal?"":`<span class="total num">${fmtN(tot)}<small> / ${MAX}</small></span>`}
       ${all?`<span class="pill ${I.cls}">${esc(I.txt)}</span>`:`<span class="pill">${n} de ${S.items.length} ítems</span>`}
       <span class="spacer"></span><button id="clr">Limpiar</button><button class="pri" id="cp">Copiar resumen</button>`);
-    $("#clr").onclick=()=>{ st.v={}; viewScale(id); };
+    $("#clr").onclick=()=>{ st.v={}; st.init=false; viewScale(id); };
     $("#cp").onclick=()=>{
       const parts = S.items.map((it,k)=>{ const s=itemScore(k); if(s==null) return `${it.name} –`;
+        if(S.labels||it.labels){ const o=optsOf(it).find(o=>o.s===s); return `${it.name}: ${o.t}`; }
         return it.bilateral ? `${it.name} D${st.v[k+"d"]} I${st.v[k+"i"]} (${fmtN(s)})` : `${it.name} ${s}`; });
       const extra = S.ages ? ` [${st.age==="nino"?"niño":"lactante"}]` : "";
-      copy(`${S.title}${extra}: ${fmtN(tot)}/${S.max}${all?"":" (incompleto)"}. ${parts.join("; ")}.`);
+      const head = S.noTotal ? (all?I.txt:"incompleto") : `${fmtN(tot)}/${MAX}${all?"":" (incompleto)"}${all&&(I.cls||S.interpret.length>1)?` – ${I.txt}`:""}`;
+      copy(`${S.title}${extra}: ${head}. ${S.defaultZero?parts.filter((p,k)=>sc[k]).join("; ")||"sin signos":parts.join("; ")}.`);
     };
   }
   update();
@@ -465,6 +485,177 @@ function viewGmfcs(){
     if(e.target.name==="band"){ st.band=e.target.value; viewGmfcs(); }
     else if(e.target.name==="lvl"){ st.lvl=Number(e.target.value); upd(); }
   };
+  upd();
+}
+
+// ---------- escalas agregadas en v2 (textos resumidos en español) ----------
+const Z = "Ausente";
+Object.assign(SCALES, {
+finnegan: {
+  title:"Finnegan modificada", full:"Escala de abstinencia neonatal (síndrome de abstinencia neonatal, SAN)",
+  lede:"Evaluar cada 3–4 horas, después de alimentar, considerando todo el intervalo. Todos los ítems parten en 0; marque solo los signos presentes.",
+  ref:"Finnegan LP, et al. Addict Dis 1975;2:141–58, versión modificada. Umbral habitual para considerar tratamiento farmacológico: ≥8 en 3 evaluaciones consecutivas (o promedio ≥8) o ≥12 en 2 consecutivas. Muchos centros usan hoy el enfoque Eat, Sleep, Console (ESC).",
+  defaultZero:true,
+  items:[
+    {group:"Sistema nervioso central", name:"Llanto", opts:[[0,Z],[2,"Agudo excesivo"],[3,"Agudo continuo"]]},
+    {name:"Sueño después de alimentarse", opts:[[0,"3 horas o más"],[1,"Menos de 3 horas"],[2,"Menos de 2 horas"],[3,"Menos de 1 hora"]]},
+    {name:"Reflejo de Moro", opts:[[0,"Normal"],[2,"Hiperactivo"],[3,"Marcadamente hiperactivo"]]},
+    {name:"Temblores (puntuar el mayor)", opts:[[0,Z],[1,"Leves, al ser estimulado"],[2,"Moderados a severos, al ser estimulado"],[3,"Leves, sin estímulo"],[4,"Moderados a severos, sin estímulo"]]},
+    {name:"Aumento del tono muscular", opts:[[0,"No"],[2,"Sí"]]},
+    {name:"Excoriaciones", hint:"Indicar zona (nariz, rodillas, codos).", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Mioclonías", opts:[[0,"No"],[3,"Sí"]]},
+    {name:"Convulsiones generalizadas", opts:[[0,"No"],[5,"Sí"]]},
+    {group:"Metabólico, vasomotor y respiratorio", name:"Sudoración", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Temperatura", opts:[[0,"Menor de 37,2 °C"],[1,"37,2 a 38,2 °C"],[2,"Mayor de 38,2 °C"]]},
+    {name:"Bostezos frecuentes (más de 3–4 en el intervalo)", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Piel moteada", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Congestión nasal", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Estornudos (más de 3–4 en el intervalo)", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Aleteo nasal", opts:[[0,"No"],[2,"Sí"]]},
+    {name:"Frecuencia respiratoria", opts:[[0,"60/min o menos"],[1,"Más de 60/min"],[2,"Más de 60/min con retracción"]]},
+    {group:"Gastrointestinal", name:"Succión excesiva", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Alimentación deficiente", opts:[[0,"No"],[2,"Sí"]]},
+    {name:"Regurgitación o vómitos", opts:[[0,Z],[2,"Regurgitación"],[3,"Vómitos en proyectil"]]},
+    {name:"Deposiciones", opts:[[0,"Normales"],[2,"Blandas"],[3,"Líquidas"]]}
+  ],
+  interpret:t=> t>=12 ? {cls:"bad", txt:"≥12: si se repite en 2 evaluaciones, considerar tratamiento"}
+    : t>=8 ? {cls:"warn", txt:"≥8: si se repite en 3 evaluaciones (o promedio ≥8), considerar tratamiento"}
+    : {cls:"ok", txt:"<8: continuar medidas no farmacológicas y reevaluar"}
+},
+sarnat: {
+  title:"Sarnat modificada", full:"Clasificación de encefalopatía hipóxico-isquémica neonatal (criterios NICHD)",
+  lede:"Elija para cada signo la columna que mejor lo describe. Se consideran 6 dominios; reflejos primitivos y sistema autónomo toman el peor de sus signos.",
+  ref:"Sarnat HB, Sarnat MS. Arch Neurol 1976;33:696–705. Shankaran S, et al. N Engl J Med 2005;353:1574–84 (NICHD). Encefalopatía moderada o severa: signos en ≥3 de 6 dominios, o convulsiones. Para hipotermia, evaluar también los criterios de asfixia, edad gestacional y edad menor de 6 horas según el protocolo local.",
+  noTotal:true, labels:["N","L","M","S"],
+  items:[
+    {group:"Elija: N normal · L leve · M moderada · S severa", name:"Nivel de conciencia", opts:[[0,"Normal"],[1,"Hiperalerta"],[2,"Letargia"],[3,"Estupor o coma"]]},
+    {name:"Actividad espontánea", opts:[[0,"Normal"],[1,"Normal o aumentada"],[2,"Disminuida"],[3,"Ausente"]]},
+    {name:"Postura", opts:[[0,"Normal"],[1,"Flexión distal leve"],[2,"Flexión distal marcada, extensión completa"],[3,"Descerebración"]]},
+    {name:"Tono", opts:[[0,"Normal"],[1,"Hipertonía"],[2,"Hipotonía focal o generalizada"],[3,"Flacidez"]]},
+    {name:"Succión (reflejos primitivos)", opts:[[0,"Normal"],[1,"Levemente débil"],[2,"Débil"],[3,"Ausente"]]},
+    {name:"Moro (reflejos primitivos)", opts:[[0,"Normal"],[1,"Exagerado, umbral bajo"],[2,"Incompleto"],[3,"Ausente"]]},
+    {name:"Pupilas (autonómico)", opts:[[0,"Normales"],[1,"Midriasis reactiva"],[2,"Miosis"],[3,"Desviadas, dilatadas o arreactivas"]]},
+    {name:"Frecuencia cardiaca (autonómico)", opts:[[0,"Normal"],[1,"Taquicardia"],[2,"Bradicardia"],[3,"Variable"]]},
+    {name:"Respiración (autonómico)", opts:[[0,"Normal"],[2,"Periódica"],[3,"Apnea o requiere ventilación"]]},
+    {name:"Convulsiones clínicas o eléctricas", labels:["No","Sí"], opts:[[0,"No"],[1,"Sí"]]}
+  ],
+  interpret:(t,sc)=>{
+    const d=[sc[0],sc[1],sc[2],sc[3],Math.max(sc[4],sc[5]),Math.max(sc[6],sc[7],sc[8])];
+    const ms=d.filter(x=>x>=2).length, sv=d.filter(x=>x===3).length, cv=sc[9]===1;
+    if(ms>=3||cv){ const g = sv>=3 ? "severa" : "moderada";
+      return {cls:"bad", txt:`Encefalopatía ${g}: ${ms} de 6 dominios M/S${cv?" + convulsiones":""}. Cumple criterio neurológico de hipotermia`}; }
+    if(d.some(x=>x>=1)) return {cls:"warn", txt:`Encefalopatía leve (${ms} de 6 dominios M/S). No cumple criterio neurológico`};
+    return {cls:"ok", txt:"Examen normal"};
+  }
+},
+ygtss: {
+  title:"YGTSS", full:"Yale Global Tic Severity Scale",
+  lede:"Basada en entrevista y observación de la última semana. Tics motores y fónicos se puntúan por separado en 5 dimensiones (0–5).",
+  ref:"Leckman JF, et al. J Am Acad Child Adolesc Psychiatry 1989;28:566–73. Descripciones resumidas; use el formulario oficial para la entrevista. Puntaje total de tics 0–50; puntaje global = tics + deterioro (0–100).",
+  items:(()=>{
+    const dims = [
+      ["Número",["Ninguno","Un tic","2 a 5 tics discretos","Más de 5 tics discretos","Varios tics y al menos un patrón orquestado (simultáneo o secuencial)","Varios tics y varios patrones orquestados difíciles de separar"]],
+      ["Frecuencia",["Ninguna","Rara: no todos los días","Ocasional: casi a diario, con largos periodos libres","Frecuente: a diario, en muchas horas del día","Casi siempre: prácticamente cada hora, pocos intervalos libres","Siempre: casi continuos, sin intervalos libres apreciables"]],
+      ["Intensidad",["Ausente","Mínima: imperceptible para otros","Leve: no más llamativa que un movimiento o sonido normal","Moderada: más llamativa, otros pueden notarlo","Marcada: muy llamativa y exagerada","Severa: extremadamente llamativa o con riesgo de lesión"]],
+      ["Complejidad",["Ninguna","Límite: algún tic no claramente simple","Leve: algunos tics complejos breves","Moderada: tics complejos frecuentes, pueden parecer conductas propositivas","Marcada: secuencias complejas prolongadas, difíciles de disimular","Severa: episodios largos de conducta compleja, imposibles de disimular"]],
+      ["Interferencia",["Ninguna","Mínima: no interrumpe la conducta o el habla","Leve: interrumpe ocasionalmente","Moderada: interrumpe con frecuencia","Marcada: interrumpe con frecuencia y a veces impide la acción o el habla","Severa: impide con frecuencia la acción o el habla"]]
+    ];
+    const mk = (g) => dims.map(([n,o],i)=>({group:i===0?g:undefined, name:`${n}`, opts:o.map((t,s)=>[s,t])}));
+    return [...mk("Tics motores"), ...mk("Tics fónicos"),
+      {group:"Deterioro global", name:"Deterioro", hint:"Impacto en autoestima, vida familiar, social, escolar o laboral.", opts:[[0,"Ninguno"],[10,"Mínimo"],[20,"Leve"],[30,"Moderado"],[40,"Marcado"],[50,"Severo"]]}];
+  })(),
+  interpret:(t,sc)=>{
+    const m=sc.slice(0,5).reduce((a,b)=>a+b,0), f=sc.slice(5,10).reduce((a,b)=>a+b,0);
+    return {cls:"", txt:`Motor ${m}/25 · Fónico ${f}/25 · Total tics ${m+f}/50 · Deterioro ${sc[10]}`};
+  }
+}
+});
+
+// ---------- Tardieu modificada ----------
+const TARDIEU_MUSCLES = ["Gastrocnemio (rodilla extendida)","Sóleo (rodilla flexionada)","Isquiotibiales","Aductores de cadera","Recto femoral","Flexores de codo","Pronadores","Flexores de muñeca","Flexores de dedos"];
+const TARDIEU_X = ["Sin resistencia en todo el rango","Resistencia leve en todo el rango, sin enganche claro","Enganche claro en un ángulo preciso que interrumpe el movimiento, seguido de liberación","Clono agotable (<10 s) en un ángulo preciso","Clono inagotable (>10 s) en un ángulo preciso","Articulación inmóvil"];
+function viewTardieu(){
+  const st = ST.tardieu ||= {rows:[{m:0,side:"d",r1:"",r2:"",x:null},{m:0,side:"i",r1:"",r2:"",x:null}]};
+  const rowHtml = (r,k) => `<div class="card" data-k="${k}">
+    <div class="item-h"><div class="field" style="flex:1"><label for="tm${k}">Músculo</label><select id="tm${k}" name="m">${TARDIEU_MUSCLES.map((m,i)=>`<option value="${i}" ${r.m===i?"selected":""}>${m}</option>`).join("")}</select></div></div>
+    <div class="row" style="margin-top:10px;align-items:end">
+      <div class="field"><label>Lado</label><div class="seg"><label><input type="radio" name="side${k}" value="d" ${r.side==="d"?"checked":""}><span>Der</span></label><label><input type="radio" name="side${k}" value="i" ${r.side==="i"?"checked":""}><span>Izq</span></label></div></div>
+      <div class="field"><label for="r1${k}">R1 (V3) °</label><input id="r1${k}" name="r1" type="number" inputmode="numeric" value="${r.r1}"></div>
+      <div class="field"><label for="r2${k}">R2 (V1) °</label><input id="r2${k}" name="r2" type="number" inputmode="numeric" value="${r.r2}"></div>
+      <div class="field"><label>R2 − R1</label><div class="big num" style="font-size:1.3rem" id="dif${k}">–</div></div>
+    </div>
+    <div class="field" style="margin-top:10px"><label>Calidad de la reacción (X)</label><div class="seg">${[0,1,2,3,4,5].map(x=>`<label><input type="radio" name="x${k}" value="${x}" ${r.x===x?"checked":""}><span>${x}</span></label>`).join("")}</div></div>
+    ${st.rows.length>1?`<div style="margin-top:10px"><button data-del="${k}">Quitar</button></div>`:""}
+  </div>`;
+  $("#view").innerHTML = `<h1>Tardieu modificada</h1>
+  <p class="lede">Para cada músculo: R2 es el ángulo de rango pasivo a velocidad lenta (V1) y R1 el ángulo del enganche a velocidad rápida (V3). Una diferencia R2 − R1 amplia sugiere componente dinámico (espasticidad); una diferencia pequeña sugiere contractura fija.</p>
+  <div class="stack" id="rows">${st.rows.map(rowHtml).join("")}</div>
+  <div style="margin-top:12px"><button id="add">Agregar músculo</button></div>
+  <div class="card" style="margin-top:16px"><h2>Calidad de la reacción muscular (X)</h2><table class="t" style="margin-top:8px">${TARDIEU_X.map((t,i)=>`<tr><td>${i}</td><td>${t}</td></tr>`).join("")}</table>
+  <p class="hint" style="margin-top:8px">V1: lo más lento posible. V2: velocidad de caída por gravedad. V3: lo más rápido posible. Ángulos medidos desde la posición de mínimo estiramiento.</p></div>
+  <p class="ref" style="margin-top:16px">Tardieu G, et al. 1954; Boyd RN, Graham HK. Eur J Neurol 1999;6(Suppl 4):S23–35.</p>`;
+  const num = v => v===""||v==null ? null : Number(v);
+  const upd = () => {
+    const lines=[];
+    st.rows.forEach((r,k)=>{ const a=num(r.r1), b=num(r.r2); const d = a!=null&&b!=null ? b-a : null;
+      $("#dif"+k).textContent = d==null ? "–" : `${d}°`;
+      if(a!=null||b!=null||r.x!=null) lines.push(`${TARDIEU_MUSCLES[r.m]} ${r.side==="d"?"D":"I"}: R1 ${a??"–"}°, R2 ${b??"–"}°, R2−R1 ${d??"–"}°, X${r.x??"–"}`); });
+    if(!lines.length){ bar(null); return; }
+    bar(`<span class="pill">${lines.length} músculo${lines.length>1?"s":""} evaluado${lines.length>1?"s":""}</span><span class="spacer"></span><button id="clr">Limpiar</button><button class="pri" id="cp">Copiar resumen</button>`);
+    $("#clr").onclick=()=>{ delete ST.tardieu; viewTardieu(); };
+    $("#cp").onclick=()=>copy(`Tardieu modificada: ${lines.join("; ")}.`);
+  };
+  $("#view").oninput = $("#view").onchange = e => {
+    const c=e.target.closest("[data-k]"); if(!c) return; const r=st.rows[+c.dataset.k], n=e.target.name;
+    if(n==="m") r.m=+e.target.value; else if(n==="r1"||n==="r2") r[n]=e.target.value;
+    else if(n.startsWith("side")) r.side=e.target.value; else if(n.startsWith("x")) r.x=+e.target.value;
+    upd();
+  };
+  $("#add").onclick=()=>{ const last=st.rows[st.rows.length-1]; st.rows.push({m:last?last.m:0, side:last&&last.side==="d"?"i":"d", r1:"",r2:"",x:null}); viewTardieu(); };
+  $("#rows").onclick=e=>{ const d=e.target.dataset.del; if(d!=null){ st.rows.splice(+d,1); viewTardieu(); } };
+  upd();
+}
+
+// ---------- Burke-Fahn-Marsden ----------
+const BFM_PROV = ["Sin distonía","Solo con una acción específica","Con muchas acciones","Con la acción de una parte distante del cuerpo, o intermitente en reposo","Presente en reposo"];
+const BFM_PROV_SPEECH = ["Ninguno","Ocasional en habla o deglución, o en ambas","Frecuente en una de ellas","Frecuente en una y ocasional en la otra","Frecuente en ambas"];
+const BFM_REG = [
+  ["Ojos",0.5,["Sin distonía","Leve: parpadeo ocasional","Parpadeo frecuente sin espasmos prolongados","Espasmos prolongados de cierre palpebral, ojos abiertos la mayor parte del tiempo","Espasmos prolongados, ojos cerrados al menos 30% del tiempo"]],
+  ["Boca",0.5,["Sin distonía","Leve: muecas ocasionales u otros movimientos","Muecas u otros movimientos menos del 50% del tiempo","Espasmos o contracciones distónicas moderadas la mayor parte del tiempo","Contracciones severas la mayor parte del tiempo"]],
+  ["Habla y deglución",1,["Normal","Leve: se entiende fácil o atoros ocasionales","Cierta dificultad para entender o atoros frecuentes","Marcada dificultad para entender o no puede tragar sólidos","Anartria total o casi total, o gran dificultad para tragar blandos y líquidos"],true],
+  ["Cuello",0.5,["Sin distonía","Leve: tracción ocasional","Tortícolis evidente pero leve","Tracción moderada","Tracción extrema"]],
+  ["Brazo derecho",1,["Sin distonía","Leve, sin importancia clínica","Evidente pero no discapacitante","Moderada: puede tomar objetos con algo de función manual","Severa: sin prensión útil"]],
+  ["Brazo izquierdo",1,null],
+  ["Tronco",1,["Sin distonía","Leve inclinación, sin importancia clínica","Inclinación evidente que no interfiere con estar de pie o caminar","Moderada: interfiere con estar de pie o caminar","Extrema: impide estar de pie o caminar"]],
+  ["Pierna derecha",1,["Sin distonía","Leve, sin alteración funcional","Leve: camina con agilidad y sin ayuda","Moderada: dificulta mucho la marcha o requiere ayuda","Severa: no puede pararse ni caminar sobre esa pierna"]],
+  ["Pierna izquierda",1,null]
+];
+BFM_REG[5][2]=BFM_REG[4][2]; BFM_REG[8][2]=BFM_REG[7][2];
+const BFM_DIS = [["Habla",4],["Escritura",4],["Alimentación (uso de cubiertos)",4],["Comer y deglutir",4],["Higiene",4],["Vestirse",4],["Marcha",6]];
+function viewBfm(){
+  const st = ST.bfm ||= {p:{}, s:{}, d:{}};
+  const seg = (nm,val,max) => `<div class="seg">${Array.from({length:max+1},(_,i)=>`<label><input type="radio" name="${nm}" value="${i}" ${val===i?"checked":""}><span>${i}</span></label>`).join("")}</div>`;
+  $("#view").innerHTML = `<h1>Burke-Fahn-Marsden</h1>
+  <p class="lede">Escala de distonía (BFMDRS). Movimiento: en cada región, factor provocador × severidad × peso; total 0–120. Discapacidad: 0–30.</p>
+  <div class="stack">${BFM_REG.map(([n,w,sev,speech],k)=>`<div class="card"><div class="item-h"><h2>${n} <small style="color:var(--muted);font-weight:400">× ${fmtN(w)}</small></h2><span class="sc" id="bs${k}"></span></div>
+    <div class="sides" style="margin-top:8px"><div><div class="side-l">Factor provocador</div>${seg("p"+k,st.p[k],4)}</div><div><div class="side-l">Severidad</div>${seg("s"+k,st.s[k],4)}</div></div>
+    <details style="margin-top:8px"><summary class="hint" style="cursor:pointer">Ver descriptores</summary><div class="sides" style="margin-top:6px">
+      <table class="t">${(speech?BFM_PROV_SPEECH:BFM_PROV).map((t,i)=>`<tr><td>${i}</td><td>${t}</td></tr>`).join("")}</table>
+      <table class="t">${sev.map((t,i)=>`<tr><td>${i}</td><td>${t}</td></tr>`).join("")}</table></div></details></div>`).join("")}
+  <div class="card"><h2>Escala de discapacidad</h2><p class="hint">0 normal a 4 dependencia total (marcha: 0 normal a 6 no camina).</p>
+    <div class="stack">${BFM_DIS.map(([n,mx],k)=>`<div><div class="side-l">${n}</div>${seg("d"+k,st.d[k],mx)}</div>`).join("")}</div></div></div>
+  <p class="ref" style="margin-top:16px">Burke RE, Fahn S, Marsden CD, et al. Neurology 1985;35:73–7. Descriptores resumidos.</p>`;
+  const upd = () => {
+    let mov=0, n=0; const parts=[];
+    BFM_REG.forEach(([nm,w],k)=>{ const p=st.p[k], s=st.s[k]; const v = p!=null&&s!=null ? p*s*w : null;
+      $("#bs"+k).textContent = v==null?"":fmtN(v); if(v!=null){ mov+=v; n++; if(v>0) parts.push(`${nm} ${p}×${s}${w!==1?"×0,5":""}=${fmtN(v)}`); } });
+    const dn = Object.keys(st.d).length, dis = Object.values(st.d).reduce((a,b)=>a+b,0);
+    bar(`<span class="total num">${fmtN(mov)}<small> / 120</small></span>${n<9?`<span class="pill">${n} de 9 regiones</span>`:""}
+      ${dn?`<span class="pill">Discapacidad ${dis}/30</span>`:""}<span class="spacer"></span><button id="clr">Limpiar</button><button class="pri" id="cp">Copiar resumen</button>`);
+    $("#clr").onclick=()=>{ delete ST.bfm; viewBfm(); };
+    $("#cp").onclick=()=>copy(`BFMDRS movimiento: ${fmtN(mov)}/120${n<9?" (incompleto)":""}${parts.length?` (${parts.join("; ")})`:""}.${dn?` Discapacidad: ${dis}/30${dn<7?" (incompleto)":""}.`:""}`);
+  };
+  $("#view").onchange = e => { const m=e.target.name.match(/^([psd])(\d+)$/); if(m){ st[m[1]][m[2]]=+e.target.value; upd(); } };
   upd();
 }
 
