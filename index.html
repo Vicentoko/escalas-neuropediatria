@@ -55,6 +55,7 @@ h2{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:0;text-wra
 .opt{position:relative}
 .opt input{position:absolute;left:0;top:0;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}
 .opt .n{font-family:var(--mono);text-align:center;border:1px solid var(--line);border-radius:6px;font-size:.85rem;padding-block:1px}
+.opt input[type=checkbox]:not(:checked) ~ .n{color:transparent}
 .opt:has(input:checked){background:var(--accent-soft);border-color:var(--accent)}
 .opt:has(input:checked) .n{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:1px}
@@ -278,7 +279,7 @@ function bar(html){ const b=$("#bar"); if(!html){ b.hidden=true; bar.last=null; 
 
 // ---------- navegación ----------
 const ROUTES = [
-  ["inicio","Inicio"],["edad","Edad corregida"],["pc","Perímetro craneano"],["pcrn","PC al nacer"],["finnegan","Finnegan"],["sarnat","Sarnat"],["bind","BIND"],["mchat","M-CHAT-R"],["gmfcs","GMFCS"],
+  ["inicio","Inicio"],["edad","Edad corregida"],["pc","Perímetro craneano"],["pcrn","PC al nacer"],["finnegan","Finnegan"],["sarnat","Sarnat"],["bind","BIND"],["hitos","Hitos del desarrollo"],["mchat","M-CHAT-R"],["gmfcs","GMFCS"],
   ["tardieu","Tardieu"],["tono","Ashworth / MRC"],["sprs","SPRS"],["sara","SARA"],["bfm","Burke-Fahn-Marsden"],["ygtss","YGTSS"],
   ["pedmidas","PedMIDAS"],["gcs","Glasgow"]
 ];
@@ -287,7 +288,7 @@ function route(){
   const r = ROUTES.find(x=>x[0]===id) ? id : "inicio";
   $("#nav").innerHTML = ROUTES.map(([k,l])=>`<a href="#${k}" class="${k===r?"on":""}">${l}</a>`).join("");
   bar(null); $("#view").onchange=null; $("#view").oninput=null;
-  ({inicio:viewHome, pc:viewPC, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm, edad:viewEdad, pcrn:viewPcrn}[r] || (()=>viewScale(r)))();
+  ({inicio:viewHome, pc:viewPC, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm, edad:viewEdad, pcrn:viewPcrn, hitos:viewHitos}[r] || (()=>viewScale(r)))();
   window.scrollTo(0,0);
 }
 window.addEventListener("hashchange", route);
@@ -309,11 +310,12 @@ function viewHome(){
     gcs:["Glasgow pediátrico","Versión lactante y niño, 3–15."],
     edad:["Edad corregida","Cronológica, corregida, postmenstrual y fecha de término."],
     pcrn:["PC al nacer (Alarcón-Pittaluga)","Curva chilena por edad gestacional, 24–42 semanas."],
+    hitos:["Hitos del desarrollo","Hitos esperados para la edad (CDC/AAP 2022) y cociente de desarrollo."],
     bind:["BIND","Encefalopatía por hiperbilirrubinemia, 0–9."]
   };
   const CATS = [
     ["Recién nacido",["edad","pcrn","pc","bind","finnegan","sarnat"]],
-    ["Lactante y desarrollo",["edad","pc","mchat","gmfcs"]],
+    ["Lactante y desarrollo",["hitos","edad","pc","mchat","gmfcs"]],
     ["Tono y función motora",["tardieu","tono","sprs","gmfcs"]],
     ["Trastornos del movimiento",["bfm","ygtss","sara"]],
     ["Cefalea",["pedmidas"]],
@@ -345,6 +347,7 @@ function viewHome(){
   draw();
 }
 const KW = {
+  hitos:"desarrollo psicomotor dsm hitos cociente indice retraso vigilancia cdc",
   edad:"prematuro pretermino edad gestacional postmenstrual", pcrn:"perimetro cefalico circunferencia craneana microcefalia prematuro pretermino curva chilena intrauterino",
   pc:"circunferencia craneana perimetro cefalico microcefalia macrocefalia oms who cdc percentil", bind:"ictericia hiperbilirrubinemia kernicterus bilirrubina",
   finnegan:"abstinencia sindrome de abstinencia neonatal opioides drogas", sarnat:"asfixia encefalopatia hipoxico isquemica eihi hipotermia",
@@ -715,6 +718,148 @@ function viewPcrn(){
     $("#clr").onclick=()=>{ delete ST.pcrn; viewPcrn(); };
   };
   $("#view").oninput = $("#view").onchange = upd; upd();
+}
+
+// ---------- Hitos del desarrollo (Zubler JM, et al. Pediatrics 2022;149:e2021052138, tablas 3–6) ----------
+// Hitos que ≥75% de los niños logra a cada edad. Traducción propia. [edad en meses, área, texto]
+const HITOS_AREAS = {S:"Socioemocional", L:"Lenguaje y comunicación", C:"Cognitivo", M:"Motor"};
+const HITOS = [
+[2,"S","Se calma cuando le hablan o lo toman en brazos"],[2,"S","Mira su cara"],[2,"S","Parece contento de verlo cuando usted se acerca"],[2,"S","Sonríe cuando usted le habla o le sonríe"],
+[2,"L","Hace sonidos distintos al llanto"],[2,"L","Reacciona a sonidos fuertes"],
+[2,"C","Lo sigue con la mirada cuando usted se mueve"],[2,"C","Mira un juguete por varios segundos"],
+[2,"M","Levanta la cabeza en posición prona"],[2,"M","Mueve ambos brazos y ambas piernas"],[2,"M","Abre las manos brevemente"],
+[4,"S","Sonríe por sí solo para llamar su atención"],[4,"S","Ríe entre dientes (aún no una carcajada) cuando intenta hacerlo reír"],[4,"S","Lo mira, se mueve o hace sonidos para llamar o mantener su atención"],
+[4,"L","Hace sonidos como “oooo” y “aahh” (gorjeo)"],[4,"L","Responde con sonidos cuando usted le habla"],[4,"L","Gira la cabeza hacia el sonido de su voz"],
+[4,"C","Si tiene hambre, abre la boca al ver el pecho o el biberón"],[4,"C","Se mira las manos con interés"],
+[4,"M","Mantiene la cabeza firme sin apoyo cuando usted lo sostiene"],[4,"M","Sostiene un juguete cuando se lo pone en la mano"],[4,"M","Mueve el brazo para golpear juguetes"],[4,"M","Se lleva las manos a la boca"],[4,"M","Se apoya en codos o antebrazos en posición prona"],
+[6,"S","Reconoce a personas conocidas"],[6,"S","Le gusta mirarse al espejo"],[6,"S","Se ríe"],
+[6,"L","Se turna con usted para hacer sonidos"],[6,"L","Hace “trompetillas” (saca la lengua y sopla)"],[6,"L","Hace chillidos"],
+[6,"C","Se lleva cosas a la boca para explorarlas"],[6,"C","Estira la mano para tomar un juguete que quiere"],[6,"C","Cierra los labios para mostrar que no quiere más comida"],
+[6,"M","Gira de prono a supino"],[6,"M","Se empuja con los brazos extendidos en posición prona"],[6,"M","Se apoya en las manos para sostenerse sentado"],
+[9,"S","Es tímido, apegado o temeroso con extraños"],[9,"S","Muestra varias expresiones faciales (alegría, tristeza, enojo, sorpresa)"],[9,"S","Mira cuando lo llaman por su nombre"],[9,"S","Reacciona cuando usted se va (mira, estira los brazos o llora)"],[9,"S","Sonríe o ríe al jugar a “¿dónde está?… ¡aquí está!”"],
+[9,"L","Hace sonidos variados como “mamamama” y “babababa”"],[9,"L","Levanta los brazos para que lo tomen"],
+[9,"C","Busca objetos que se le caen fuera de su vista (cuchara, juguete)"],[9,"C","Golpea dos cosas entre sí"],
+[9,"M","Se sienta solo"],[9,"M","Se mantiene sentado sin apoyo"],[9,"M","Usa los dedos para “rastrillar” la comida hacia sí"],[9,"M","Pasa objetos de una mano a la otra"],
+[12,"S","Juega juegos con usted, como las “tortitas”"],
+[12,"L","Hace “chao” con la mano"],[12,"L","Llama a un padre “mamá”, “papá” u otro nombre especial"],[12,"L","Entiende el “no” (se detiene o hace una pausa)"],
+[12,"C","Mete algo en un recipiente, como un cubo en una taza"],[12,"C","Busca cosas que ve que usted esconde, como un juguete bajo una manta"],
+[12,"M","Se pone de pie con apoyo"],[12,"M","Camina afirmándose en los muebles"],[12,"M","Bebe de un vaso sin tapa que usted le sostiene"],[12,"M","Toma objetos pequeños con pinza pulgar-índice"],
+[15,"S","Imita a otros niños al jugar"],[15,"S","Le muestra un objeto que le gusta"],[15,"S","Aplaude cuando está entusiasmado"],[15,"S","Abraza un peluche u otro juguete"],[15,"S","Le muestra afecto (abrazos, mimos o besos)"],
+[15,"L","Intenta decir 1 o 2 palabras además de mamá o papá"],[15,"L","Mira un objeto conocido cuando usted lo nombra"],[15,"L","Sigue instrucciones dadas con gesto y palabras"],[15,"L","Señala para pedir algo o pedir ayuda"],
+[15,"C","Intenta usar las cosas de forma correcta (teléfono, vaso, libro)"],[15,"C","Apila al menos 2 objetos pequeños, como cubos"],
+[15,"M","Da algunos pasos solo"],[15,"M","Come algunos alimentos con los dedos"],
+[18,"S","Se aleja de usted, pero mira para asegurarse de que está cerca"],[18,"S","Señala para mostrarle algo interesante"],[18,"S","Extiende las manos para que se las lave"],[18,"S","Mira algunas páginas de un libro con usted"],[18,"S","Ayuda a vestirse metiendo el brazo en la manga o levantando el pie"],
+[18,"L","Intenta decir 3 o más palabras además de mamá o papá"],[18,"L","Sigue instrucciones de un paso sin gestos (“Dámelo”)"],
+[18,"C","Lo imita en tareas de la casa, como barrer"],[18,"C","Juega con juguetes de forma simple, como empujar un auto"],
+[18,"M","Camina sin afirmarse de nada ni de nadie"],[18,"M","Hace garabatos"],[18,"M","Bebe de un vaso sin tapa, a veces derramando"],[18,"M","Come solo con los dedos"],[18,"M","Intenta usar una cuchara"],[18,"M","Sube y baja de un sillón o silla sin ayuda"],
+[24,"S","Nota cuando otros están heridos o tristes"],[24,"S","Mira su cara para saber cómo reaccionar ante algo nuevo"],
+[24,"L","Señala cosas en un libro cuando se le pregunta (“¿Dónde está el oso?”)"],[24,"L","Junta al menos 2 palabras (“Más leche”)"],[24,"L","Señala al menos 2 partes del cuerpo cuando se le pide"],[24,"L","Usa más gestos que despedirse y señalar (tirar un beso, asentir)"],
+[24,"C","Sostiene algo con una mano mientras usa la otra"],[24,"C","Intenta usar interruptores, perillas o botones de un juguete"],[24,"C","Juega con más de un juguete a la vez (comida de juguete en un plato)"],
+[24,"M","Patea una pelota"],[24,"M","Corre"],[24,"M","Sube (caminando, no gateando) algunos peldaños, con o sin ayuda"],[24,"M","Come con cuchara"],
+[30,"S","Juega al lado de otros niños y a veces con ellos"],[30,"S","Le muestra lo que sabe hacer diciendo “¡Mírame!”"],[30,"S","Sigue rutinas simples cuando se le indica (ordenar juguetes)"],
+[30,"L","Dice unas 50 palabras"],[30,"L","Dice 2 o más palabras con un verbo (“Perrito corre”)"],[30,"L","Nombra cosas en un libro cuando usted señala y pregunta"],[30,"L","Dice palabras como yo, mí o nosotros"],
+[30,"C","Usa objetos para simular (dar de comer un cubo a una muñeca)"],[30,"C","Resuelve problemas simples, como subirse a un banquito para alcanzar algo"],[30,"C","Sigue instrucciones de 2 pasos"],[30,"C","Muestra que conoce al menos 1 color"],
+[30,"M","Usa las manos para girar cosas (manillas, tapas)"],[30,"M","Se quita algo de ropa solo"],[30,"M","Salta con ambos pies"],[30,"M","Da vuelta las páginas de un libro de a una"],
+[36,"S","Se calma dentro de 10 minutos después de que usted se va"],[36,"S","Nota a otros niños y se une a jugar"],
+[36,"L","Conversa con usted con al menos 2 intercambios"],[36,"L","Hace preguntas (quién, qué, dónde, por qué)"],[36,"L","Dice qué acción ocurre en una imagen (correr, comer, jugar)"],[36,"L","Dice su nombre cuando se le pregunta"],[36,"L","Habla lo bastante claro para que otros le entiendan la mayor parte del tiempo"],
+[36,"C","Dibuja un círculo cuando se le muestra cómo"],[36,"C","Evita tocar objetos calientes cuando se le advierte"],
+[36,"M","Ensarta objetos, como cuentas grandes o macarrones"],[36,"M","Se pone algo de ropa solo"],[36,"M","Usa tenedor"],
+[48,"S","Juega a ser otro (profesor, superhéroe, perro)"],[48,"S","Pide ir a jugar con otros niños si no hay nadie"],[48,"S","Consuela a otros que están heridos o tristes"],[48,"S","Evita peligros, como saltar desde alturas en el parque"],[48,"S","Le gusta ser “ayudante”"],[48,"S","Cambia su conducta según el lugar (iglesia, biblioteca, parque)"],
+[48,"L","Dice frases de 4 o más palabras"],[48,"L","Dice algunas palabras de una canción, cuento o rima"],[48,"L","Cuenta al menos una cosa que le pasó en el día"],[48,"L","Responde preguntas simples (“¿Para qué sirve un abrigo?”)"],
+[48,"C","Nombra algunos colores"],[48,"C","Dice qué viene después en un cuento conocido"],[48,"C","Dibuja una persona con 3 o más partes del cuerpo"],
+[48,"M","Atrapa una pelota grande la mayoría de las veces"],[48,"M","Se sirve comida o agua, con supervisión"],[48,"M","Desabrocha algunos botones"],[48,"M","Toma el lápiz entre los dedos y el pulgar (no con el puño)"],
+[60,"S","Sigue reglas o respeta turnos al jugar con otros niños"],[60,"S","Canta, baila o actúa para usted"],[60,"S","Hace tareas simples en casa (ordenar calcetines, levantar la mesa)"],
+[60,"L","Cuenta una historia con al menos 2 eventos"],[60,"L","Responde preguntas simples sobre un cuento leído"],[60,"L","Mantiene una conversación con más de 3 intercambios"],[60,"L","Usa o reconoce rimas simples"],
+[60,"C","Cuenta hasta 10"],[60,"C","Nombra algunos números del 1 al 5 cuando se le señalan"],[60,"C","Usa palabras de tiempo (ayer, mañana, noche)"],[60,"C","Mantiene la atención 5–10 minutos en una actividad (sin pantallas)"],[60,"C","Escribe algunas letras de su nombre"],[60,"C","Nombra algunas letras cuando se le señalan"],
+[60,"M","Abrocha algunos botones"],[60,"M","Salta en un pie"]
+];
+const HITOS_EDADES = [...new Set(HITOS.map(h=>h[0]))];
+const edadLabel = m => m<24 ? `${m} meses` : m===30 ? "30 meses" : `${m/12} años`;
+
+function viewHitos(){
+  const st = ST.hitos ||= {mode:"edad", y:"", mo:"", d:"", dob:"", dom:iso(new Date()), ga:"", gad:"", ok:{}};
+  $("#view").innerHTML = `<h1>Hitos del desarrollo</h1>
+  <p class="lede">Hitos que al menos el 75% de los niños logra a cada edad (CDC/AAP 2022). Marque los hitos logrados; la app estima la edad de desarrollo por área y el cociente de desarrollo (CD = edad de desarrollo / edad cronológica × 100).</p>
+  <div class="card"><div class="field" style="margin-bottom:10px"><label>Edad</label><div class="seg">
+      <label><input type="radio" name="hmode" value="fechas" ${st.mode==="fechas"?"checked":""}><span>Por fechas</span></label>
+      <label><input type="radio" name="hmode" value="edad" ${st.mode==="edad"?"checked":""}><span>Edad directa</span></label></div></div>
+    <div class="grid2" ${st.mode==="fechas"?"":"hidden"}>
+      <div class="field"><label for="hdob">Fecha de nacimiento</label><input id="hdob" type="date" value="${st.dob}"></div>
+      <div class="field"><label for="hdom">Fecha de evaluación</label><input id="hdom" type="date" value="${st.dom}"></div></div>
+    <div class="row" ${st.mode==="edad"?"":"hidden"}>
+      <div class="field"><label for="hy">Años</label><input id="hy" type="number" inputmode="numeric" min="0" max="6" value="${st.y}"></div>
+      <div class="field"><label for="hm">Meses</label><input id="hm" type="number" inputmode="numeric" min="0" max="72" value="${st.mo}"></div>
+      <div class="field"><label for="hd">Días</label><input id="hd" type="number" inputmode="numeric" min="0" max="31" value="${st.d}"></div></div>
+    <div class="row" style="margin-top:12px">
+      <div class="field"><label for="hga">EG al nacer (sem)</label><input id="hga" type="number" inputmode="numeric" min="22" max="42" placeholder="término" value="${st.ga}"></div>
+      <div class="field"><label for="hgad">+ días</label><input id="hgad" type="number" inputmode="numeric" min="0" max="6" value="${st.gad}"></div></div>
+    <p class="hint" style="margin:8px 0 0">Si nació antes de las 37 semanas y tiene menos de 24 meses, se usa la edad corregida.</p>
+  </div>
+  <div id="hout" style="margin-top:12px"></div>
+  <p class="ref" style="margin-top:16px">Zubler JM, Wiggins LD, Macias MM, et al. Evidence-informed milestones for developmental surveillance tools. Pediatrics 2022;149(3):e2021052138. Edad de desarrollo por área = mayor edad en la que el niño logra todos los hitos de esa edad y de las anteriores; el global es el promedio de las 4 áreas. Es una estimación para vigilancia, no un test estandarizado: un hito no logrado indica aplicar una prueba de tamizaje (ASQ-3, EEDP, TEPSI).</p>`;
+  $("#view").onchange = e => {
+    if(e.target.name==="hmode"){ readAge(); st.mode=e.target.value; viewHitos(); return; }
+    const m=e.target.name&&e.target.name.match(/^h(\d+)$/); if(m){ st.ok[m[1]]=e.target.checked; calc(); return; }
+    calc();
+  };
+  $("#view").oninput = e => { if(e.target.type!=="checkbox") calc(); };
+  $("#view").onclick = e => { const a=e.target.dataset.all; if(a!=null){ const on=e.target.dataset.on==="1";
+    HITOS.forEach((h,i)=>{ if(h[0]===+a) st.ok[i]=on; }); calc(true); } };
+  function readAge(){ st.y=$("#hy").value; st.mo=$("#hm").value; st.d=$("#hd").value; st.dob=$("#hdob").value; st.dom=$("#hdom").value; st.ga=$("#hga").value; st.gad=$("#hgad").value; }
+  let shown = null;
+  function calc(force){
+    readAge();
+    let days=null;
+    if(st.mode==="fechas"){ if(st.dob&&st.dom) days=daysBetween(st.dob,st.dom); }
+    else if(st.y!==""||st.mo!==""||st.d!=="") days=(+st.y||0)*365.25+(+st.mo||0)*DPM+(+st.d||0);
+    const out=$("#hout");
+    if(days==null||days<0){ out.innerHTML=""; bar(null); shown=null; return; }
+    const ga = st.ga===""?null:(+st.ga)*7+(+st.gad||0);
+    const corr = ga!=null && ga<259 && days<DPM*24 ? 280-ga : 0;
+    const ec = (days-corr)/DPM; // edad cronológica (o corregida) en meses
+    if(ec<2){ out.innerHTML=`<div class="card"><span class="pill">${corr?"Edad corregida":"Edad"} menor de 2 meses: la primera lista de hitos es a los 2 meses.</span></div>`; bar(null); shown=null; return; }
+    const cur = HITOS_EDADES.filter(a=>a<=ec).pop();
+    const next = HITOS_EDADES.find(a=>a>cur);
+    const ages = HITOS_EDADES.filter(a=>a<=cur).concat(next?[next]:[]);
+    const key = ages.join(",");
+    if(force || key!==shown){
+      shown = key;
+      out.innerHTML = `<div id="hres"></div>` + ages.slice().reverse().map(a=>{
+        const tag = a===cur ? "Edad actual" : a===next ? "Siguiente (opcional)" : "Anterior";
+        return `<details class="cat" ${a===cur?"open":""} style="margin-top:12px"><summary>${edadLabel(a)}<span class="c" id="hc${a}"></span></summary>
+          <div style="padding:0 16px 14px"><p class="hint" style="margin:0 0 8px">${tag}. <button data-all="${a}" data-on="1">Marcar todos</button> <button data-all="${a}" data-on="0">Desmarcar</button></p>
+          ${Object.keys(HITOS_AREAS).map(ar=>{ const hs=HITOS.map((h,i)=>[h,i]).filter(([h])=>h[0]===a&&h[1]===ar); if(!hs.length) return "";
+            return `<div class="side-l" style="margin-top:10px">${HITOS_AREAS[ar]}</div>`+hs.map(([h,i])=>`<label class="opt" style="grid-template-columns:1.6em 1fr"><input type="checkbox" name="h${i}" ${st.ok[i]?"checked":""}><span class="n">✓</span><span>${esc(h[2])}</span></label>`).join(""); }).join("")}
+          </div></details>`; }).join("");
+    }
+    // edad de desarrollo por área: mayor edad con todos los hitos de esa edad y anteriores logrados
+    const ed = {}; const faltan = [];
+    for(const ar of Object.keys(HITOS_AREAS)){
+      let v=0;
+      for(const a of ages){ const hs=HITOS.map((h,i)=>[h,i]).filter(([h])=>h[0]===a&&h[1]===ar); if(!hs.length) continue;
+        if(hs.every(([h,i])=>st.ok[i])) v=a; else break; }
+      ed[ar]=v;
+    }
+    HITOS.forEach((h,i)=>{ if(h[0]<=cur && !st.ok[i]) faltan.push(i); });
+    ages.forEach(a=>{ const hs=HITOS.map((h,i)=>i).filter(i=>HITOS[i][0]===a); const n=hs.filter(i=>st.ok[i]).length; const el=$("#hc"+a); if(el) el.textContent=`${n}/${hs.length}`; });
+    const cd = v => Math.round(v/ec*100);
+    const glob = Object.values(ed).reduce((x,y)=>x+y,0)/4;
+    const cls = v => v>=85?"ok":v>=70?"warn":"bad";
+    const ecTxt = `${fmt(ec,1)} meses`;
+    $("#hres").innerHTML = `<div class="card"><p style="margin:0 0 10px">Edad ${corr?"corregida":"cronológica"}: <b>${ecTxt}</b> · lista vigente: ${edadLabel(cur)}</p>
+      <div class="chart"><table class="t"><tr><th>Área</th><th>Edad de desarrollo</th><th>CD</th></tr>
+      ${Object.entries(HITOS_AREAS).map(([k,n])=>`<tr><td style="font-family:var(--body);color:var(--ink)">${n}</td><td>${ed[k]?edadLabel(ed[k]):"< 2 meses"}</td><td><span class="pill ${cls(cd(ed[k]))}">${cd(ed[k])}</span></td></tr>`).join("")}
+      <tr><td style="font-family:var(--body);color:var(--ink)"><b>Global (promedio)</b></td><td>${fmt(glob,1)} meses</td><td><span class="pill ${cls(cd(glob))}">${cd(glob)}</span></td></tr></table></div>
+      ${faltan.length?`<p class="hint" style="margin-top:10px"><b>${faltan.length} hito${faltan.length>1?"s":""} no marcado${faltan.length>1?"s":""} hasta los ${edadLabel(cur)}.</b> Un hito no logrado a la edad indicada justifica aplicar una prueba de tamizaje.</p>`:`<p class="hint" style="margin-top:10px">Logra todos los hitos esperados para su edad.</p>`}
+      <p class="hint">CD orientativo: ≥85 normal · 70–84 en riesgo · &lt;70 sugerente de retraso. Con listas cada 2–12 meses, el CD tiene baja resolución.</p></div>`;
+    const sum = `Hitos del desarrollo (CDC/AAP 2022). Edad ${corr?"corregida":"cronológica"} ${ecTxt}. `
+      + Object.entries(HITOS_AREAS).map(([k,n])=>`${n}: ED ${ed[k]?edadLabel(ed[k]):"<2 meses"}, CD ${cd(ed[k])}`).join("; ")
+      + `. Global: ED ${fmt(glob,1)} meses, CD ${cd(glob)}.`
+      + (faltan.length?` Hitos no logrados: ${faltan.map(i=>`${HITOS[i][2]} (${edadLabel(HITOS[i][0])})`).join("; ")}.`:" Logra todos los hitos para su edad.");
+    bar(`<span class="pill ${cls(cd(glob))}">CD global ${cd(glob)}</span><span class="spacer"></span><button id="clr">Limpiar</button><button class="pri" id="cp">Copiar resumen</button>`);
+    $("#cp").onclick=()=>copy(sum); $("#clr").onclick=()=>{ delete ST.hitos; viewHitos(); };
+  }
+  calc();
 }
 
 // ---------- Tardieu modificada ----------
