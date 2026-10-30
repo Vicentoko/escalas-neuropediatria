@@ -256,11 +256,12 @@ function fallback(text){
   let ok=false; try{ ok=document.execCommand("copy"); }catch(e){}
   ta.remove(); toast(ok ? "Resumen copiado" : "No se pudo copiar: " + text.slice(0,60) + "…");
 }
-function bar(html){ const b=$("#bar"); if(!html){ b.hidden=true; return; } b.hidden=false; $("#barin").innerHTML=html; }
+function bar(html){ const b=$("#bar"); if(!html){ b.hidden=true; bar.last=null; return; } b.hidden=false;
+  if(html!==bar.last){ $("#barin").innerHTML=html; bar.last=html; } } // no reemplazar botones idénticos: un blur antes del clic los perdería
 
 // ---------- navegación ----------
 const ROUTES = [
-  ["inicio","Inicio"],["pc","Perímetro craneano"],["finnegan","Finnegan"],["sarnat","Sarnat"],["mchat","M-CHAT-R"],["gmfcs","GMFCS"],
+  ["inicio","Inicio"],["edad","Edad corregida"],["pc","Perímetro craneano"],["finnegan","Finnegan"],["sarnat","Sarnat"],["bind","BIND"],["mchat","M-CHAT-R"],["gmfcs","GMFCS"],
   ["tardieu","Tardieu"],["tono","Ashworth / MRC"],["sprs","SPRS"],["sara","SARA"],["bfm","Burke-Fahn-Marsden"],["ygtss","YGTSS"],
   ["pedmidas","PedMIDAS"],["gcs","Glasgow"]
 ];
@@ -269,7 +270,7 @@ function route(){
   const r = ROUTES.find(x=>x[0]===id) ? id : "inicio";
   $("#nav").innerHTML = ROUTES.map(([k,l])=>`<a href="#${k}" class="${k===r?"on":""}">${l}</a>`).join("");
   bar(null); $("#view").onchange=null; $("#view").oninput=null;
-  ({inicio:viewHome, pc:viewPC, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm}[r] || (()=>viewScale(r)))();
+  ({inicio:viewHome, pc:viewPC, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm, edad:viewEdad}[r] || (()=>viewScale(r)))();
   window.scrollTo(0,0);
 }
 window.addEventListener("hashchange", route);
@@ -288,11 +289,13 @@ function viewHome(){
     bfm:["Burke-Fahn-Marsden","Distonía: movimiento 0–120 y discapacidad 0–30."],
     ygtss:["YGTSS","Severidad de tics motores y fónicos, 0–100."],
     pedmidas:["PedMIDAS","Discapacidad por cefalea en 3 meses, grados I–IV."],
-    gcs:["Glasgow pediátrico","Versión lactante y niño, 3–15."]
+    gcs:["Glasgow pediátrico","Versión lactante y niño, 3–15."],
+    edad:["Edad corregida","Cronológica, corregida, postmenstrual y fecha de término."],
+    bind:["BIND","Encefalopatía por hiperbilirrubinemia, 0–9."]
   };
   const CATS = [
-    ["Recién nacido",["finnegan","sarnat","pc"]],
-    ["Lactante y desarrollo",["pc","mchat","gmfcs"]],
+    ["Recién nacido",["edad","pc","bind","finnegan","sarnat"]],
+    ["Lactante y desarrollo",["edad","pc","mchat","gmfcs"]],
     ["Tono y función motora",["tardieu","tono","sprs","gmfcs"]],
     ["Trastornos del movimiento",["bfm","ygtss","sara"]],
     ["Cefalea",["pedmidas"]],
@@ -491,6 +494,17 @@ function viewGmfcs(){
 // ---------- escalas agregadas en v2 (textos resumidos en español) ----------
 const Z = "Ausente";
 Object.assign(SCALES, {
+bind: {
+  title:"BIND", full:"Disfunción neurológica inducida por bilirrubina (Bilirubin-Induced Neurologic Dysfunction)",
+  lede:"Para recién nacidos con hiperbilirrubinemia severa. 3 ítems, 0–3 cada uno; total 0–9. Repetir en cada evaluación.",
+  ref:"Johnson L, Brown AK, Bhutani VK. Pediatrics 1999;104:746–7; Radmacher PG, et al. J Perinatol 2016. Interpretación orientativa: 1–3 leve (sutil, reversible), 4–6 moderada (progresiva, considerar exanguinotransfusión urgente), 7–9 severa (avanzada).",
+  items:[
+    {name:"Estado mental", opts:["Normal","Somnoliento pero despertable; se alimenta menos","Letárgico, succión débil, o irritable/tembloroso con succión fuerte","Semicoma, apneas, no se alimenta, convulsiones o coma"]},
+    {name:"Tono muscular", opts:["Normal","Hipotonía leve a moderada persistente","Hipertonía leve a moderada alternando con hipotonía; inicio de arqueo de cuello y tronco al estimular","Retrocolis y opistótonos persistentes; pedaleo o sacudidas de manos y pies"]},
+    {name:"Llanto", opts:["Normal","Agudo al despertar","Estridente, difícil de consolar","Inconsolable, o llanto débil o ausente"]}
+  ],
+  interpret:t=> t===0 ? {cls:"ok",txt:"Sin signos de BIND"} : t<=3 ? {cls:"warn",txt:"BIND leve (1–3)"} : t<=6 ? {cls:"bad",txt:"BIND moderado (4–6): considerar exanguinotransfusión urgente"} : {cls:"bad",txt:"BIND severo (7–9)"}
+},
 finnegan: {
   title:"Finnegan modificada", full:"Escala de abstinencia neonatal (síndrome de abstinencia neonatal, SAN)",
   lede:"Evaluar cada 3–4 horas, después de alimentar, considerando todo el intervalo. Todos los ítems parten en 0; marque solo los signos presentes.",
@@ -570,6 +584,53 @@ ygtss: {
   }
 }
 });
+
+// ---------- Edad corregida ----------
+const addDays = (isoD, n) => { const d=new Date(isoD+"T00:00:00Z"); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); };
+const wkTxt = d => `${Math.floor(d/7)} sem ${d%7} d`;
+const dmy = isoD => isoD.split("-").reverse().join("-");
+function calDiff(a, b){ // diferencia calendario entre fechas ISO a <= b
+  const A=new Date(a+"T00:00:00Z"), B=new Date(b+"T00:00:00Z");
+  let y=B.getUTCFullYear()-A.getUTCFullYear(), m=B.getUTCMonth()-A.getUTCMonth(), d=B.getUTCDate()-A.getUTCDate();
+  if(d<0){ m--; d+=new Date(Date.UTC(B.getUTCFullYear(), B.getUTCMonth(), 0)).getUTCDate(); }
+  if(m<0){ y--; m+=12; }
+  return {y,m,d};
+}
+const calTxt = ({y,m,d}) => [y?`${y} a`:"", (y||m)?`${m} m`:"", `${d} d`].filter(Boolean).join(" ");
+function viewEdad(){
+  const st = ST.edad ||= {dob:"", ga:"", gad:"", dom:iso(new Date())};
+  $("#view").innerHTML = `<h1>Edad corregida</h1>
+  <p class="lede">Calcula edad cronológica, edad postmenstrual, fecha de término y edad corregida a partir de la fecha de nacimiento y la edad gestacional.</p>
+  <div class="card"><div class="grid2">
+    <div class="field"><label for="edob">Fecha de nacimiento</label><input id="edob" type="date" value="${st.dob}"></div>
+    <div class="field"><label for="edom">Fecha de evaluación</label><input id="edom" type="date" value="${st.dom}"></div></div>
+    <div class="row" style="margin-top:12px">
+      <div class="field"><label for="ega">EG al nacer (sem)</label><input id="ega" type="number" inputmode="numeric" min="22" max="42" value="${st.ga}"></div>
+      <div class="field"><label for="egad">+ días</label><input id="egad" type="number" inputmode="numeric" min="0" max="6" value="${st.gad}"></div></div></div>
+  <div id="eout" style="margin-top:12px"></div>
+  <p class="ref" style="margin-top:16px">Edad corregida = edad cronológica − (40 semanas − EG al nacer). Se usa habitualmente hasta los 2 años de edad cronológica (algunos protocolos la extienden en menores de 28 semanas).</p>`;
+  const upd = () => {
+    st.dob=$("#edob").value; st.dom=$("#edom").value; st.ga=$("#ega").value; st.gad=$("#egad").value;
+    const out=$("#eout");
+    if(!st.dob||!st.dom||st.ga===""){ out.innerHTML=""; bar(null); return; }
+    const d=daysBetween(st.dob, st.dom); if(d<0){ out.innerHTML=`<div class="card"><span class="pill bad">La fecha de evaluación es anterior al nacimiento</span></div>`; bar(null); return; }
+    const g=(+st.ga)*7+(+st.gad||0), pre=280-g, term=addDays(st.dob, pre), pma=g+d, cd=d-pre;
+    const corr = cd<0 ? `Faltan ${wkTxt(-cd)} para el término` : calTxt(calDiff(term, st.dom)) + (cd<7*16?` (${wkTxt(cd)})`:"");
+    const chrono = calTxt(calDiff(st.dob, st.dom)) + (d<7*16?` (${wkTxt(d)})`:"");
+    const late = d > 730.5;
+    out.innerHTML = `<div class="card"><dl class="kv" style="font-size:1rem;gap:8px 16px">
+      <dt>Edad cronológica</dt><dd>${chrono}</dd>
+      <dt>Edad corregida</dt><dd><b>${pre<=0?"No aplica (término)":corr}</b></dd>
+      <dt>Edad postmenstrual</dt><dd>${wkTxt(pma)}</dd>
+      <dt>Fecha de término (40 sem)</dt><dd>${dmy(term)}</dd>
+      <dt>Semanas de prematurez</dt><dd>${pre>0?wkTxt(pre):"0"}</dd></dl>
+      ${late&&pre>0?`<p class="hint" style="margin-top:10px">Más de 2 años de edad cronológica: habitualmente ya no se corrige.</p>`:""}</div>`;
+    const sum = `Nacido(a) ${dmy(st.dob)} con ${wkTxt(g)} de EG. Al ${dmy(st.dom)}: edad cronológica ${chrono}; edad corregida ${pre<=0?"no aplica":corr}; EPM ${wkTxt(pma)}.`;
+    bar(`<span class="pill">${pre>0?"Corregida: "+corr:"Nacido de término"}</span><span class="spacer"></span><button id="clr">Limpiar</button><button class="pri" id="cp">Copiar resumen</button>`);
+    $("#cp").onclick=()=>copy(sum); $("#clr").onclick=()=>{ delete ST.edad; viewEdad(); };
+  };
+  $("#view").oninput = $("#view").onchange = upd; upd();
+}
 
 // ---------- Tardieu modificada ----------
 const TARDIEU_MUSCLES = ["Gastrocnemio (rodilla extendida)","Sóleo (rodilla flexionada)","Isquiotibiales","Aductores de cadera","Recto femoral","Flexores de codo","Pronadores","Flexores de muñeca","Flexores de dedos"];
