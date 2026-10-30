@@ -844,17 +844,17 @@ function viewHitos(){
     ages.forEach(a=>{ const hs=HITOS.map((h,i)=>i).filter(i=>HITOS[i][0]===a); const n=hs.filter(i=>st.ok[i]).length; const el=$("#hc"+a); if(el) el.textContent=`${n}/${hs.length}`; });
     const cd = v => Math.round(v/ec*100);
     const glob = Object.values(ed).reduce((x,y)=>x+y,0)/4;
-    const cls = v => v>=85?"ok":v>=70?"warn":"bad";
+    const cls = v => v>=70?"ok":"bad";
     const ecTxt = `${fmt(ec,1)} meses`;
     $("#hres").innerHTML = `<div class="card"><p style="margin:0 0 10px">Edad ${corr?"corregida":"cronológica"}: <b>${ecTxt}</b> · lista vigente: ${edadLabel(cur)}</p>
       <div class="chart"><table class="t"><tr><th>Área</th><th>Edad de desarrollo</th><th>CD</th></tr>
       ${Object.entries(HITOS_AREAS).map(([k,n])=>`<tr><td style="font-family:var(--body);color:var(--ink)">${n}</td><td>${ed[k]?edadLabel(ed[k]):"< 2 meses"}</td><td><span class="pill ${cls(cd(ed[k]))}">${cd(ed[k])}</span></td></tr>`).join("")}
       <tr><td style="font-family:var(--body);color:var(--ink)"><b>Global (promedio)</b></td><td>${fmt(glob,1)} meses</td><td><span class="pill ${cls(cd(glob))}">${cd(glob)}</span></td></tr></table></div>
       ${faltan.length?`<p class="hint" style="margin-top:10px"><b>${faltan.length} hito${faltan.length>1?"s":""} no marcado${faltan.length>1?"s":""} hasta los ${edadLabel(cur)}.</b> Un hito no logrado a la edad indicada justifica aplicar una prueba de tamizaje.</p>`:`<p class="hint" style="margin-top:10px">Logra todos los hitos esperados para su edad.</p>`}
-      <p class="hint">CD orientativo: ≥85 normal · 70–84 en riesgo · &lt;70 sugerente de retraso. Con listas cada 2–12 meses, el CD tiene baja resolución.</p></div>`;
+      <p class="hint">CD &lt;70 se considera alterado. Como las listas van cada 2–12 meses, el CD tiene saltos y no se usan cortes intermedios.</p></div>`;
     const sum = `Hitos del desarrollo (CDC/AAP 2022). Edad ${corr?"corregida":"cronológica"} ${ecTxt}. `
-      + Object.entries(HITOS_AREAS).map(([k,n])=>`${n}: ED ${ed[k]?edadLabel(ed[k]):"<2 meses"}, CD ${cd(ed[k])}`).join("; ")
-      + `. Global: ED ${fmt(glob,1)} meses, CD ${cd(glob)}.`
+      + Object.entries(HITOS_AREAS).map(([k,n])=>`${n}: ED ${ed[k]?edadLabel(ed[k]):"<2 meses"}, CD ${cd(ed[k])}${cd(ed[k])<70?" (alterado)":""}`).join("; ")
+      + `. Global: ED ${fmt(glob,1)} meses, CD ${cd(glob)}${cd(glob)<70?" (alterado)":""}.`
       + (faltan.length?` Hitos no logrados: ${faltan.map(i=>`${HITOS[i][2]} (${edadLabel(HITOS[i][0])})`).join("; ")}.`:" Logra todos los hitos para su edad.");
     bar(`<span class="pill ${cls(cd(glob))}">CD global ${cd(glob)}</span><span class="spacer"></span><button id="clr">Limpiar</button><button class="pri" id="cp">Copiar resumen</button>`);
     $("#cp").onclick=()=>copy(sum); $("#clr").onclick=()=>{ delete ST.hitos; viewHitos(); };
