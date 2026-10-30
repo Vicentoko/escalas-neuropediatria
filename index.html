@@ -261,7 +261,7 @@ function bar(html){ const b=$("#bar"); if(!html){ b.hidden=true; bar.last=null; 
 
 // ---------- navegación ----------
 const ROUTES = [
-  ["inicio","Inicio"],["edad","Edad corregida"],["pc","Perímetro craneano"],["finnegan","Finnegan"],["sarnat","Sarnat"],["bind","BIND"],["mchat","M-CHAT-R"],["gmfcs","GMFCS"],
+  ["inicio","Inicio"],["edad","Edad corregida"],["pc","Perímetro craneano"],["pcrn","PC al nacer"],["finnegan","Finnegan"],["sarnat","Sarnat"],["bind","BIND"],["mchat","M-CHAT-R"],["gmfcs","GMFCS"],
   ["tardieu","Tardieu"],["tono","Ashworth / MRC"],["sprs","SPRS"],["sara","SARA"],["bfm","Burke-Fahn-Marsden"],["ygtss","YGTSS"],
   ["pedmidas","PedMIDAS"],["gcs","Glasgow"]
 ];
@@ -270,7 +270,7 @@ function route(){
   const r = ROUTES.find(x=>x[0]===id) ? id : "inicio";
   $("#nav").innerHTML = ROUTES.map(([k,l])=>`<a href="#${k}" class="${k===r?"on":""}">${l}</a>`).join("");
   bar(null); $("#view").onchange=null; $("#view").oninput=null;
-  ({inicio:viewHome, pc:viewPC, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm, edad:viewEdad}[r] || (()=>viewScale(r)))();
+  ({inicio:viewHome, pc:viewPC, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm, edad:viewEdad, pcrn:viewPcrn}[r] || (()=>viewScale(r)))();
   window.scrollTo(0,0);
 }
 window.addEventListener("hashchange", route);
@@ -291,10 +291,11 @@ function viewHome(){
     pedmidas:["PedMIDAS","Discapacidad por cefalea en 3 meses, grados I–IV."],
     gcs:["Glasgow pediátrico","Versión lactante y niño, 3–15."],
     edad:["Edad corregida","Cronológica, corregida, postmenstrual y fecha de término."],
+    pcrn:["PC al nacer (Alarcón-Pittaluga)","Curva chilena por edad gestacional, 24–42 semanas."],
     bind:["BIND","Encefalopatía por hiperbilirrubinemia, 0–9."]
   };
   const CATS = [
-    ["Recién nacido",["edad","pc","bind","finnegan","sarnat"]],
+    ["Recién nacido",["edad","pcrn","pc","bind","finnegan","sarnat"]],
     ["Lactante y desarrollo",["edad","pc","mchat","gmfcs"]],
     ["Tono y función motora",["tardieu","tono","sprs","gmfcs"]],
     ["Trastornos del movimiento",["bfm","ygtss","sara"]],
@@ -632,6 +633,44 @@ function viewEdad(){
   $("#view").oninput = $("#view").onchange = upd; upd();
 }
 
+// ---------- PC al nacer: Alarcón-Pittaluga (Rev Chil Pediatr 2010;81:264-74, tabla 4; ambos sexos) ----------
+// [EG, n, promedio, DS, p10, p50, p90]
+const AP_PC = [[24,6,23.0,1.0,21.9,23.2,24.4],[25,13,24.1,1.2,22.8,24.3,25.7],[26,13,25.1,1.3,23.6,25.3,26.9],[27,16,26.2,1.4,24.5,26.4,28.1],
+[28,26,27.2,1.5,25.5,27.4,29.1],[29,23,28.1,1.5,26.4,28.3,30.1],[30,37,29.1,1.5,27.3,29.3,31.0],[31,68,30.0,1.5,28.1,30.2,31.8],
+[32,143,30.8,1.5,29.0,31.0,32.6],[33,226,31.6,1.4,29.8,31.8,33.3],[34,412,32.3,1.4,30.5,32.5,33.9],[35,799,33.0,1.3,31.2,33.1,34.5],
+[36,2128,33.6,1.3,31.9,33.7,35.0],[37,6193,34.1,1.2,32.4,34.2,35.5],[38,16458,34.5,1.2,32.9,34.6,35.9],[39,24752,34.9,1.2,33.2,34.9,36.2],
+[40,20760,35.1,1.3,33.4,35.1,36.5],[41,9625,35.2,1.4,33.6,35.2,36.8],[42,906,35.3,1.5,33.5,35.2,37.0]];
+function viewPcrn(){
+  const st = ST.pcrn ||= {ga:"", hc:""};
+  $("#view").innerHTML = `<h1>PC al nacer</h1>
+  <p class="lede">Curva chilena de crecimiento intrauterino Alarcón-Pittaluga, recomendada por la Rama de Neonatología de SOCHIPE. Para recién nacidos de 24 a 42 semanas, medición al nacer. Para el seguimiento posterior use <a href="#pc">Perímetro craneano</a> con edad corregida.</p>
+  <div class="card"><div class="grid2">
+    <div class="field"><label for="apga">EG al nacer (semanas cumplidas)</label><input id="apga" type="number" inputmode="numeric" min="24" max="42" value="${st.ga}"></div>
+    <div class="field"><label for="aphc">Perímetro cefálico (cm)</label><input id="aphc" type="number" inputmode="decimal" step="0.1" value="${st.hc}"></div></div></div>
+  <div id="apout" style="margin-top:12px"></div>
+  <div class="card" style="margin-top:12px"><h2>Tabla de referencia</h2><div class="chart" style="margin-top:8px"><table class="t num" id="aptab">
+    <tr><th>EG</th><th>n</th><th>Prom</th><th>DS</th><th>p10</th><th>p50</th><th>p90</th></tr>
+    ${AP_PC.map(r=>`<tr data-ga="${r[0]}"><td>${r[0]}</td>${r.slice(1).map((v,i)=>`<td>${i===0?v.toLocaleString("es"):fmt(v,1)}</td>`).join("")}</tr>`).join("")}</table></div></div>
+  <p class="ref" style="margin-top:16px">Milad M, Novoa JM, Fabres J, et al. Recomendación sobre curvas de crecimiento intrauterino. Rev Chil Pediatr 2010;81(3):264–74, tabla 4 (datos conjuntos de Alarcón y Pittaluga, ambos sexos, n = 82.604). El puntaje z se estima con promedio y DS, por lo que es aproximado; la clasificación usa los percentiles ajustados.</p>`;
+  const upd = () => {
+    st.ga=$("#apga").value; st.hc=$("#aphc").value;
+    document.querySelectorAll("#aptab tr[data-ga]").forEach(tr=>tr.style.background = tr.dataset.ga===st.ga ? "var(--accent-soft)" : "");
+    const r = AP_PC.find(x=>String(x[0])===st.ga), hc = st.hc===""?null:Number(st.hc);
+    const out=$("#apout");
+    if(st.ga!=="" && !r){ out.innerHTML=`<div class="card"><span class="pill warn">La tabla cubre de 24 a 42 semanas</span></div>`; bar(null); return; }
+    if(!r||hc==null){ out.innerHTML=""; bar(null); return; }
+    const z=(hc-r[2])/r[3];
+    const I = hc<r[4] ? {cls:"bad",txt:"Bajo p10"} : hc>r[6] ? {cls:"warn",txt:"Sobre p90"} : {cls:"ok",txt:"Entre p10 y p90"};
+    const zt = `${z<0?"−":"+"}${fmt(Math.abs(z),1)}`;
+    out.innerHTML = `<div class="card"><div class="big num">z ≈ ${zt}</div><div style="margin:6px 0 10px"><span class="pill ${I.cls}">${I.txt}</span></div>
+      <dl class="kv"><dt>p10 / p50 / p90</dt><dd>${fmt(r[4],1)} / ${fmt(r[5],1)} / ${fmt(r[6],1)} cm</dd><dt>Promedio ± DS</dt><dd>${fmt(r[2],1)} ± ${fmt(r[3],1)} cm</dd></dl></div>`;
+    bar(`<span class="pill ${I.cls}">${I.txt} · z ≈ ${zt}</span><span class="spacer"></span><button id="clr">Limpiar</button><button class="pri" id="cp">Copiar resumen</button>`);
+    $("#cp").onclick=()=>copy(`PC al nacer ${fmt(hc,1)} cm a las ${r[0]} semanas: ${I.txt.toLowerCase()} (p10 ${fmt(r[4],1)}, p50 ${fmt(r[5],1)}, p90 ${fmt(r[6],1)} cm), z ≈ ${zt}. Referencia Alarcón-Pittaluga.`);
+    $("#clr").onclick=()=>{ delete ST.pcrn; viewPcrn(); };
+  };
+  $("#view").oninput = $("#view").onchange = upd; upd();
+}
+
 // ---------- Tardieu modificada ----------
 const TARDIEU_MUSCLES = ["Gastrocnemio (rodilla extendida)","Sóleo (rodilla flexionada)","Isquiotibiales","Aductores de cadera","Recto femoral","Flexores de codo","Pronadores","Flexores de muñeca","Flexores de dedos"];
 const TARDIEU_X = ["Sin resistencia en todo el rango","Resistencia leve en todo el rango, sin enganche claro","Enganche claro en un ángulo preciso que interrumpe el movimiento, seguido de liberación","Clono agotable (<10 s) en un ángulo preciso","Clono inagotable (>10 s) en un ángulo preciso","Articulación inmóvil"];
@@ -760,7 +799,7 @@ function ageTxt(days){
 function viewPC(){
   const st = ST.pc ||= {sex:"m", mode:"fechas", dob:"", dom:iso(new Date()), y:"", mo:"", d:"", ga:"", gad:"", corr:true, hc:"", ref:"who"};
   $("#view").innerHTML = `<h1>Perímetro craneano</h1>
-  <p class="lede">Puntaje z y percentil con las tablas LMS oficiales: OMS 2006 (0–5 años, por día) y CDC 2000 (0–36 meses).</p>
+  <p class="lede">Puntaje z y percentil con las tablas LMS oficiales: OMS 2006 (0–5 años, por día) y CDC 2000 (0–36 meses). Para la medición al nacer en pretérminos use <a href="#pcrn">PC al nacer (Alarcón-Pittaluga)</a>.</p>
   <div class="stack">
   <div class="card"><div class="grid2">
     <div class="field"><label>Sexo</label><div class="seg">
