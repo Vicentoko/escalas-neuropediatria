@@ -35,7 +35,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var
 .brand .w{display:block;font-weight:800;font-size:1.3rem;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
 .hero{display:flex;flex-direction:column;align-items:center;text-align:center;margin:8px 0 24px}
 .hero .k{font-size:1.1rem;font-weight:600;color:var(--coral);margin-top:10px}
-.hero .w{font-size:2.4rem;font-weight:800;color:var(--accent);letter-spacing:-.03em;line-height:1;margin-top:-2px}
+.hero .w{font-size:clamp(1.8rem,8vw,2.4rem);font-weight:800;color:var(--accent);letter-spacing:-.03em;line-height:1.05;margin-top:12px;text-wrap:balance}
 .hero .t{font-size:.85rem;color:var(--muted);margin-top:6px}
 nav{display:flex;gap:6px;overflow-x:auto;padding-block:6px 10px;scrollbar-width:none}
 nav a{flex:none;font-size:.85rem;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;white-space:nowrap}
@@ -132,7 +132,7 @@ footer{color:var(--muted);font-size:.8rem;padding-block:24px}
 <body>
 <header>
   <div class="wrap">
-    <a class="brand" href="#inicio"><svg viewBox="0 0 100 100" width="36" height="36" aria-hidden="true"><g fill="none" stroke="#14485A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" fill="#FF7A59"/></svg><span><span class="k">escalas de</span><span class="w">neuropediatría</span></span></a>
+    <a class="brand" href="#inicio"><svg viewBox="0 0 100 100" width="36" height="36" aria-hidden="true"><g fill="none" stroke="#14485A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" fill="#FF7A59"/></svg><span><span class="w">Escalas Neuropediatría</span></span></a>
     <nav id="nav"></nav>
   </div>
 </header>
@@ -295,7 +295,7 @@ window.addEventListener("hashchange", route);
 
 function viewHome(){
   const T = {
-    pc:["Perímetro craneano","Puntaje z y percentil OMS (0–5 años) y CDC (0–36 meses), con edad corregida."],
+    pc:["Perímetro craneano","Puntaje z y percentil OMS, CDC y UK90, de 0 a 18 años, con edad corregida."],
     finnegan:["Finnegan modificada","Abstinencia neonatal, con umbrales de tratamiento."],
     sarnat:["Sarnat modificada","Encefalopatía hipóxico-isquémica y criterio neurológico de hipotermia."],
     mchat:["M-CHAT-R","Puntuación del cuestionario de autismo, 16–30 meses."],
@@ -321,7 +321,7 @@ function viewHome(){
     ["Cefalea",["pedmidas"]],
     ["Urgencia",["gcs"]]
   ];
-  $("#view").innerHTML = `<div class="hero"><svg viewBox="0 0 100 100" width="88" height="88" aria-hidden="true"><g fill="none" stroke="#14485A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" fill="#FF7A59"/></svg><span class="k">escalas de</span><span class="w">neuropediatría</span><span class="t">Neuropediatría · Universidad de Valparaíso</span></div>
+  $("#view").innerHTML = `<div class="hero"><svg viewBox="0 0 100 100" width="88" height="88" aria-hidden="true"><g fill="none" stroke="#14485A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" fill="#FF7A59"/></svg><span class="w">Escalas Neuropediatría</span><span class="t">Neuropediatría · Universidad de Valparaíso</span></div>
   <p class="lede">Calculadoras para la consulta. Elija una escala; al terminar use <b>Copiar resumen</b> para pegarlo en la ficha clínica.</p>
   <div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
     <input id="q" type="search" placeholder="Buscar (ej. ataxia, tics, prematuro)" aria-label="Buscar escala" autocomplete="off" value="${esc(ST.q||"")}"></div>
@@ -349,7 +349,7 @@ function viewHome(){
 const KW = {
   hitos:"desarrollo psicomotor dsm hitos cociente indice retraso vigilancia cdc",
   edad:"prematuro pretermino edad gestacional postmenstrual", pcrn:"perimetro cefalico circunferencia craneana microcefalia prematuro pretermino curva chilena intrauterino",
-  pc:"circunferencia craneana perimetro cefalico microcefalia macrocefalia oms who cdc percentil", bind:"ictericia hiperbilirrubinemia kernicterus bilirrubina",
+  pc:"circunferencia craneana perimetro cefalico microcefalia macrocefalia oms who cdc uk90 percentil escolar adolescente", bind:"ictericia hiperbilirrubinemia kernicterus bilirrubina",
   finnegan:"abstinencia sindrome de abstinencia neonatal opioides drogas", sarnat:"asfixia encefalopatia hipoxico isquemica eihi hipotermia",
   mchat:"autismo tea tamizaje desarrollo", gmfcs:"paralisis cerebral funcion motora gruesa", tardieu:"espasticidad paralisis cerebral toxina botulinica",
   tono:"espasticidad tono fuerza ashworth mrc", sprs:"paraparesia espastica hereditaria peh hsp", sara:"ataxia cerebelo",
@@ -779,7 +779,7 @@ const edadLabel = m => m<24 ? `${m} meses` : m===30 ? "30 meses" : `${m/12} año
 function viewHitos(){
   const st = ST.hitos ||= {mode:"edad", y:"", mo:"", d:"", dob:"", dom:iso(new Date()), ga:"", gad:"", ok:{}};
   $("#view").innerHTML = `<h1>Hitos del desarrollo</h1>
-  <p class="lede">Hitos que al menos el 75% de los niños logra a cada edad (CDC/AAP 2022). Marque los hitos logrados; la app estima la edad de desarrollo por área y el cociente de desarrollo (CD = edad de desarrollo / edad cronológica × 100).</p>
+  <p class="lede">Hitos que al menos el 75% de los niños logra a cada edad (CDC/AAP 2022). Marque los hitos logrados (al marcar uno se marcan los de edades anteriores de la misma área); la app estima la edad de desarrollo por área y el cociente de desarrollo (CD = edad de desarrollo / edad cronológica × 100).</p>
   <div class="card"><div class="field" style="margin-bottom:10px"><label>Edad</label><div class="seg">
       <label><input type="radio" name="hmode" value="fechas" ${st.mode==="fechas"?"checked":""}><span>Por fechas</span></label>
       <label><input type="radio" name="hmode" value="edad" ${st.mode==="edad"?"checked":""}><span>Edad directa</span></label></div></div>
@@ -799,7 +799,10 @@ function viewHitos(){
   <p class="ref" style="margin-top:16px">Zubler JM, Wiggins LD, Macias MM, et al. Evidence-informed milestones for developmental surveillance tools. Pediatrics 2022;149(3):e2021052138. Edad de desarrollo por área = mayor edad en la que el niño logra todos los hitos de esa edad y de las anteriores; el global es el promedio de las 4 áreas. Es una estimación para vigilancia, no un test estandarizado: un hito no logrado indica aplicar una prueba de tamizaje (ASQ-3, EEDP, TEPSI).</p>`;
   $("#view").onchange = e => {
     if(e.target.name==="hmode"){ readAge(); st.mode=e.target.value; viewHitos(); return; }
-    const m=e.target.name&&e.target.name.match(/^h(\d+)$/); if(m){ st.ok[m[1]]=e.target.checked; calc(); return; }
+    const m=e.target.name&&e.target.name.match(/^h(\d+)$/); if(m){ st.ok[m[1]]=e.target.checked;
+      if(e.target.checked){ const [a0,ar0]=HITOS[m[1]]; // un hito logrado implica los de edades anteriores de la misma área
+        HITOS.forEach((h,i)=>{ if(h[1]===ar0 && h[0]<a0){ st.ok[i]=true; const cb=document.querySelector(`[name=h${i}]`); if(cb) cb.checked=true; } }); }
+      calc(); return; }
     calc();
   };
   $("#view").oninput = e => { if(e.target.type!=="checkbox") calc(); };
@@ -958,6 +961,14 @@ function whoLMS(sex, days){
   const i=Math.floor(days), f=days-i, j=Math.min(i+1,t.M.length-1);
   return {L:1, M:t.M[i]+(t.M[j]-t.M[i])*f, S:t.S[i]+(t.S[j]-t.S[i])*f};
 }
+const UK90 = {"uk_m":[[48,52.215,0.02809],[49,52.266,0.02813],[50,52.315,0.02818],[51,52.362,0.02822],[52,52.409,0.02827],[53,52.455,0.02831],[54,52.499,0.02835],[55,52.543,0.02839],[56,52.585,0.02842],[57,52.626,0.02846],[58,52.667,0.02849],[59,52.708,0.02852],[60,52.747,0.02855],[61,52.786,0.02858],[62,52.823,0.02861],[63,52.86,0.02864],[64,52.896,0.02867],[65,52.932,0.02869],[66,52.967,0.02872],[67,53.002,0.02874],[68,53.036,0.02876],[69,53.07,0.02878],[70,53.103,0.0288],[71,53.136,0.02883],[72,53.168,0.02884],[73,53.2,0.02886],[74,53.232,0.02888],[75,53.264,0.0289],[76,53.294,0.02892],[77,53.325,0.02893],[78,53.356,0.02895],[79,53.387,0.02896],[80,53.416,0.02898],[81,53.446,0.02899],[82,53.476,0.029],[83,53.505,0.02902],[84,53.534,0.02903],[85,53.563,0.02904],[86,53.591,0.02905],[87,53.62,0.02907],[88,53.649,0.02908],[89,53.676,0.02909],[90,53.704,0.0291],[91,53.732,0.02911],[92,53.76,0.02912],[93,53.787,0.02913],[94,53.814,0.02914],[95,53.841,0.02915],[96,53.867,0.02916],[97,53.893,0.02917],[98,53.92,0.02918],[99,53.946,0.02919],[100,53.972,0.0292],[101,53.998,0.02921],[102,54.024,0.02922],[103,54.05,0.02923],[104,54.076,0.02924],[105,54.101,0.02925],[106,54.126,0.02926],[107,54.152,0.02926],[108,54.178,0.02927],[109,54.203,0.02928],[110,54.229,0.02929],[111,54.254,0.0293],[112,54.279,0.02931],[113,54.305,0.02932],[114,54.33,0.02933],[115,54.355,0.02933],[116,54.38,0.02934],[117,54.406,0.02935],[118,54.431,0.02936],[119,54.457,0.02937],[120,54.482,0.02938],[121,54.507,0.02938],[122,54.533,0.02939],[123,54.558,0.0294],[124,54.584,0.02941],[125,54.61,0.02942],[126,54.635,0.02943],[127,54.661,0.02943],[128,54.687,0.02944],[129,54.713,0.02945],[130,54.74,0.02946],[131,54.766,0.02946],[132,54.793,0.02947],[133,54.82,0.02948],[134,54.846,0.02949],[135,54.874,0.02949],[136,54.902,0.0295],[137,54.929,0.02951],[138,54.956,0.02952],[139,54.984,0.02952],[140,55.012,0.02953],[141,55.04,0.02954],[142,55.069,0.02955],[143,55.098,0.02955],[144,55.126,0.02956],[145,55.155,0.02957],[146,55.184,0.02957],[147,55.214,0.02958],[148,55.243,0.02959],[149,55.272,0.02959],[150,55.302,0.0296],[151,55.332,0.02961],[152,55.362,0.02961],[153,55.392,0.02962],[154,55.422,0.02963],[155,55.453,0.02963],[156,55.484,0.02964],[157,55.514,0.02964],[158,55.546,0.02965],[159,55.576,0.02966],[160,55.608,0.02966],[161,55.639,0.02967],[162,55.67,0.02967],[163,55.701,0.02968],[164,55.732,0.02969],[165,55.764,0.02969],[166,55.795,0.0297],[167,55.827,0.0297],[168,55.858,0.02971],[169,55.889,0.02971],[170,55.921,0.02972],[171,55.953,0.02972],[172,55.983,0.02973],[173,56.014,0.02973],[174,56.046,0.02974],[175,56.077,0.02974],[176,56.108,0.02975],[177,56.139,0.02975],[178,56.17,0.02976],[179,56.201,0.02976],[180,56.232,0.02977],[181,56.262,0.02977],[182,56.293,0.02978],[183,56.324,0.02978],[184,56.354,0.02979],[185,56.384,0.02979],[186,56.414,0.0298],[187,56.444,0.0298],[188,56.474,0.0298],[189,56.503,0.02981],[190,56.533,0.02981],[191,56.562,0.02982],[192,56.591,0.02982],[193,56.621,0.02983],[194,56.65,0.02983],[195,56.679,0.02984],[196,56.707,0.02984],[197,56.736,0.02984],[198,56.764,0.02985],[199,56.792,0.02985],[200,56.821,0.02985],[201,56.849,0.02986],[202,56.876,0.02986],[203,56.904,0.02987],[204,56.932,0.02987],[205,56.96,0.02987],[206,56.987,0.02988],[207,57.014,0.02988],[208,57.041,0.02989],[209,57.068,0.02989],[210,57.095,0.02989],[211,57.121,0.0299],[212,57.148,0.0299],[213,57.174,0.0299],[214,57.201,0.02991],[215,57.227,0.02991],[216,57.26,0.02991]],"uk_f":[[48,51.104,0.02342],[49,51.156,0.02339],[50,51.208,0.02336],[51,51.258,0.02332],[52,51.309,0.02329],[53,51.358,0.02326],[54,51.406,0.02323],[55,51.454,0.02321],[56,51.501,0.02318],[57,51.546,0.02316],[58,51.591,0.02314],[59,51.637,0.02311],[60,51.681,0.02309],[61,51.725,0.02307],[62,51.768,0.02306],[63,51.81,0.02304],[64,51.852,0.02303],[65,51.893,0.02301],[66,51.934,0.023],[67,51.975,0.02299],[68,52.014,0.02298],[69,52.053,0.02297],[70,52.092,0.02296],[71,52.131,0.02295],[72,52.169,0.02294],[73,52.207,0.02294],[74,52.244,0.02293],[75,52.281,0.02293],[76,52.318,0.02293],[77,52.355,0.02293],[78,52.391,0.02292],[79,52.427,0.02292],[80,52.462,0.02292],[81,52.498,0.02293],[82,52.533,0.02293],[83,52.568,0.02293],[84,52.604,0.02293],[85,52.638,0.02294],[86,52.673,0.02294],[87,52.707,0.02295],[88,52.741,0.02296],[89,52.775,0.02296],[90,52.809,0.02297],[91,52.842,0.02298],[92,52.876,0.02299],[93,52.909,0.023],[94,52.942,0.02301],[95,52.975,0.02302],[96,53.008,0.02303],[97,53.041,0.02304],[98,53.073,0.02305],[99,53.106,0.02306],[100,53.138,0.02308],[101,53.169,0.02309],[102,53.201,0.0231],[103,53.232,0.02312],[104,53.264,0.02313],[105,53.295,0.02315],[106,53.326,0.02316],[107,53.357,0.02318],[108,53.387,0.0232],[109,53.417,0.02321],[110,53.448,0.02323],[111,53.477,0.02325],[112,53.507,0.02327],[113,53.537,0.02328],[114,53.566,0.0233],[115,53.595,0.02332],[116,53.624,0.02334],[117,53.653,0.02336],[118,53.681,0.02338],[119,53.71,0.0234],[120,53.738,0.02342],[121,53.766,0.02344],[122,53.794,0.02346],[123,53.821,0.02348],[124,53.848,0.0235],[125,53.875,0.02352],[126,53.902,0.02354],[127,53.929,0.02356],[128,53.955,0.02358],[129,53.982,0.0236],[130,54.007,0.02362],[131,54.033,0.02364],[132,54.06,0.02366],[133,54.085,0.02369],[134,54.11,0.02371],[135,54.135,0.02373],[136,54.16,0.02375],[137,54.185,0.02377],[138,54.21,0.02379],[139,54.235,0.02381],[140,54.259,0.02384],[141,54.283,0.02386],[142,54.307,0.02388],[143,54.331,0.0239],[144,54.355,0.02392],[145,54.378,0.02394],[146,54.401,0.02396],[147,54.424,0.02398],[148,54.447,0.024],[149,54.47,0.02403],[150,54.492,0.02405],[151,54.515,0.02407],[152,54.537,0.02409],[153,54.559,0.02411],[154,54.581,0.02413],[155,54.603,0.02415],[156,54.624,0.02417],[157,54.646,0.02419],[158,54.667,0.02421],[159,54.688,0.02423],[160,54.71,0.02425],[161,54.731,0.02427],[162,54.751,0.02429],[163,54.772,0.02431],[164,54.793,0.02433],[165,54.813,0.02435],[166,54.833,0.02437],[167,54.853,0.02439],[168,54.873,0.02441],[169,54.894,0.02442],[170,54.913,0.02444],[171,54.933,0.02446],[172,54.953,0.02448],[173,54.972,0.0245],[174,54.992,0.02452],[175,55.011,0.02454],[176,55.03,0.02455],[177,55.049,0.02457],[178,55.068,0.02459],[179,55.087,0.02461],[180,55.106,0.02462],[181,55.124,0.02464],[182,55.142,0.02466],[183,55.161,0.02468],[184,55.179,0.0247],[185,55.197,0.02471],[186,55.215,0.02473],[187,55.234,0.02475],[188,55.251,0.02476],[189,55.269,0.02478],[190,55.286,0.0248],[191,55.304,0.02481],[192,55.321,0.02483],[193,55.339,0.02485],[194,55.355,0.02486],[195,55.373,0.02488],[196,55.39,0.02489],[197,55.406,0.02491],[198,55.424,0.02493],[199,55.441,0.02494],[200,55.457,0.02496],[201,55.474,0.02497],[202,55.491,0.02499],[203,55.506,0.02501],[204,55.52,0.02501]]};
+// UK90 (Cole 1998, reanálisis 2009): [mes, M, S], L=1; 4–18 años (niñas hasta 17)
+function ukLMS(sex, months){
+  const t = UK90["uk_"+sex]; if(months<t[0][0] || months>t[t.length-1][0]) return null;
+  let k=0; while(k<t.length-2 && t[k+1][0]<months) k++;
+  const a=t[k], b=t[k+1], f=(months-a[0])/(b[0]-a[0]);
+  return {L:1, M:a[1]+(b[1]-a[1])*f, S:a[2]+(b[2]-a[2])*f};
+}
 function cdcLMS(sex, months){
   const t = HC["cdc_"+sex]; if(months<0 || months>36) return null;
   let k=0; while(k<t.length-2 && t[k+1][0]<months) k++;
@@ -990,7 +1001,7 @@ function ageTxt(days){
 function viewPC(){
   const st = ST.pc ||= {sex:"m", mode:"fechas", dob:"", dom:iso(new Date()), y:"", mo:"", d:"", ga:"", gad:"", corr:true, hc:"", ref:"who"};
   $("#view").innerHTML = `<h1>Perímetro craneano</h1>
-  <p class="lede">Puntaje z y percentil con las tablas LMS oficiales: OMS 2006 (0–5 años, por día) y CDC 2000 (0–36 meses). Para la medición al nacer en pretérminos use <a href="#pcrn">PC al nacer (Alarcón-Pittaluga)</a>.</p>
+  <p class="lede">Puntaje z y percentil con tablas LMS: OMS 2006 (0–5 años, por día), CDC 2000 (0–36 meses) y UK90 (4–18 años). Para la medición al nacer en pretérminos use <a href="#pcrn">PC al nacer (Alarcón-Pittaluga)</a>.</p>
   <div class="stack">
   <div class="card"><div class="grid2">
     <div class="field"><label>Sexo</label><div class="seg">
@@ -1005,7 +1016,7 @@ function viewPC(){
       <div class="field"><label for="dob">Fecha de nacimiento</label><input id="dob" type="date" value="${st.dob}"></div>
       <div class="field"><label for="dom">Fecha de medición</label><input id="dom" type="date" value="${st.dom}"></div></div>
     <div class="row" ${st.mode==="edad"?"":"hidden"} id="byAge">
-      <div class="field"><label for="ay">Años</label><input id="ay" type="number" inputmode="numeric" min="0" max="5" value="${st.y}"></div>
+      <div class="field"><label for="ay">Años</label><input id="ay" type="number" inputmode="numeric" min="0" max="18" value="${st.y}"></div>
       <div class="field"><label for="am">Meses</label><input id="am" type="number" inputmode="numeric" min="0" max="60" value="${st.mo}"></div>
       <div class="field"><label for="ad">Días</label><input id="ad" type="number" inputmode="numeric" min="0" max="31" value="${st.d}"></div></div>
     <div class="row" style="margin-top:12px;align-items:end">
@@ -1018,10 +1029,11 @@ function viewPC(){
   <div id="out"></div>
   <div class="card"><div class="item-h"><h2>Curva</h2><div class="seg">
       <label><input type="radio" name="ref" value="who" ${st.ref==="who"?"checked":""}><span>OMS</span></label>
-      <label><input type="radio" name="ref" value="cdc" ${st.ref==="cdc"?"checked":""}><span>CDC</span></label></div></div>
+      <label><input type="radio" name="ref" value="cdc" ${st.ref==="cdc"?"checked":""}><span>CDC</span></label>
+      <label><input type="radio" name="ref" value="uk" ${st.ref==="uk"?"checked":""}><span>UK90</span></label></div></div>
     <div class="chart" id="chart" style="margin-top:8px"></div></div>
   </div>
-  <p class="ref" style="margin-top:16px">OMS: WHO Child Growth Standards 2006 (head circumference-for-age). CDC: CDC 2000 Growth Charts (hcageinf). Datos LMS tomados del paquete rcpchgrowth (RCPCH), que reproduce las tablas oficiales. La OMS se recomienda para 0–2 años; CDC hasta 36 meses.</p>`;
+  <p class="ref" style="margin-top:16px">OMS: WHO Child Growth Standards 2006 (head circumference-for-age). CDC: CDC 2000 Growth Charts (hcageinf). UK90: UK 1990 reference (Cole TJ, Freeman JV, Preece MA. Stat Med 1998;17:407–29), reanálisis 2009. Datos LMS tomados del paquete rcpchgrowth (RCPCH), que reproduce las tablas oficiales. La OMS se recomienda para 0–2 años; CDC hasta 36 meses; UK90 es la referencia británica que se usa desde los 4 años (población del Reino Unido).</p>`;
 
   const read = () => {
     st.hc=$("#hc").value; st.dob=$("#dob").value; st.dom=$("#dom").value; st.y=$("#ay").value; st.mo=$("#am").value; st.d=$("#ad").value;
@@ -1042,20 +1054,22 @@ function viewPC(){
     const ageLine = corrected ? `Edad cronológica ${ageTxt(days)} · <b>corregida ${ad<0?"−"+ageTxt(-ad):ageTxt(ad)}</b>` : `Edad ${ageTxt(days)}`;
     if(ad<0){ out.innerHTML=`<div class="card">${ageLine}<p class="hint">Con edad corregida negativa (antes del término) use curvas de prematuros (Fenton / INTERGROWTH-21st).</p></div>`; bar(null); drawChart(null,null); return; }
     const res = [];
-    const w = whoLMS(st.sex, ad), c = cdcLMS(st.sex, ad/DPM);
-    for(const [nm,lms] of [["OMS",w],["CDC",c]]){
+    const w = whoLMS(st.sex, ad), c = cdcLMS(st.sex, ad/DPM), u = ukLMS(st.sex, ad/DPM);
+    for(const [nm,lms] of [["OMS",w],["CDC",c],["UK90",u]]){
       if(!lms){ res.push({nm, na:true}); continue; }
       const z = hc==null?null:zOf(hc,lms);
       res.push({nm, lms, z, p:z==null?null:ncdf(z)});
     }
-    out.innerHTML = `<div class="card"><p style="margin:0 0 10px">${ageLine}</p><div class="grid2">${res.map(r=>`<div>
+    out.innerHTML = `<div class="card"><p style="margin:0 0 10px">${ageLine}</p><div class="grid2">${res.filter(r=>!r.na || res.every(x=>x.na)).map(r=>`<div>
       <div class="side-l">${r.nm}</div>
-      ${r.na?`<p class="hint">Fuera de rango (${r.nm==="OMS"?"0–5 años":"0–36 meses"})</p>`:
+      ${r.na?`<p class="hint">Fuera de rango (${r.nm==="OMS"?"0–5 años":r.nm==="CDC"?"0–36 meses":st.sex==="m"?"4–18 años":"4–17 años"})</p>`:
       r.z==null?`<dl class="kv"><dt>P50</dt><dd>${fmt(r.lms.M,1)} cm</dd><dt>−2 DE</dt><dd>${fmt(xOf(-2,r.lms),1)} cm</dd><dt>+2 DE</dt><dd>${fmt(xOf(2,r.lms),1)} cm</dd></dl>`:
       `<div class="big num">z ${r.z<0?"−":"+"}${fmt(Math.abs(r.z),2)}</div><div class="num" style="margin:2px 0 8px">Percentil ${pctTxt(r.p)}</div>
        <span class="pill ${hcInterp(r.z).cls}">${hcInterp(r.z).txt}</span>
        <dl class="kv" style="margin-top:10px"><dt>P50</dt><dd>${fmt(r.lms.M,1)} cm</dd><dt>−2 / +2 DE</dt><dd>${fmt(xOf(-2,r.lms),1)} / ${fmt(xOf(2,r.lms),1)} cm</dd></dl>`}
     </div>`).join("")}</div></div>`;
+    const am = ad/DPM, okRef = {who:!!w, cdc:!!c, uk:!!u};
+    if(!okRef[st.ref]){ st.ref = u ? "uk" : w ? "who" : "cdc"; const rb=document.querySelector(`[name=ref][value=${st.ref}]`); if(rb) rb.checked=true; }
     drawChart(ad, hc);
     if(hc!=null){
       const sum = `PC ${fmt(hc,1)} cm, ${st.sex==="m"?"masculino":"femenino"}, ${corrected?`edad corregida ${ageTxt(ad)} (cronológica ${ageTxt(days)})`:`edad ${ageTxt(days)}`}. `
@@ -1065,25 +1079,27 @@ function viewPC(){
     } else bar(null);
   };
   function drawChart(ad, hc){
-    const sex=st.sex, ref=st.ref, maxM = ref==="who" ? 60 : 36;
+    const sex=st.sex, ref=st.ref;
+    const minM = ref==="uk" ? 48 : 0, maxM = ref==="who" ? 60 : ref==="cdc" ? 36 : (sex==="m"?216:204);
     const W=480,H=360,pl=34,pr=34,pt=12,pb=30;
-    const lines = ref==="who" ? [[-3,"−3"],[-2,"−2"],[0,"0"],[2,"+2"],[3,"+3"]] : [[-1.8808,"P3"],[-1.2816,"P10"],[0,"P50"],[1.2816,"P90"],[1.8808,"P97"]];
-    const get = m => ref==="who" ? whoLMS(sex, Math.min(m*DPM, 1856)) : cdcLMS(sex, m);
-    const pts = []; for(let m=0;m<=maxM+1e-9;m+=0.25) pts.push(m);
-    const ymin = Math.floor(xOf(-3.2,get(0))) , ymax = Math.ceil(xOf(3.2,get(maxM)));
-    const X = m => pl+(W-pl-pr)*m/maxM, Y = v => pt+(H-pt-pb)*(1-(v-ymin)/(ymax-ymin));
-    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Curva de perímetro craneano ${ref==="who"?"OMS":"CDC"}">`;
+    const lines = ref==="cdc" ? [[-1.8808,"P3"],[-1.2816,"P10"],[0,"P50"],[1.2816,"P90"],[1.8808,"P97"]] : [[-3,"−3"],[-2,"−2"],[0,"0"],[2,"+2"],[3,"+3"]];
+    const get = m => ref==="who" ? whoLMS(sex, Math.min(m*DPM, 1856)) : ref==="cdc" ? cdcLMS(sex, m) : ukLMS(sex, m);
+    const pts = []; for(let m=minM;m<=maxM+1e-9;m+=(ref==="uk"?1:0.25)) pts.push(m);
+    const ymin = Math.floor(xOf(-3.2,get(minM))) , ymax = Math.ceil(xOf(3.2,get(maxM)));
+    const X = m => pl+(W-pl-pr)*(m-minM)/(maxM-minM), Y = v => pt+(H-pt-pb)*(1-(v-ymin)/(ymax-ymin));
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Curva de perímetro craneano ${ref==="who"?"OMS":ref==="cdc"?"CDC":"UK90"}">`;
     for(let v=Math.ceil(ymin/2)*2; v<=ymax; v+=2) s+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${pl-6}" y="${Y(v)+4}" text-anchor="end">${v}</text>`;
-    const step = ref==="who"?6:3;
-    for(let m=0;m<=maxM;m+=step) s+=`<line x1="${X(m)}" x2="${X(m)}" y1="${pt}" y2="${H-pb}" stroke="var(--line)" stroke-width="1" opacity=".6"/><text x="${X(m)}" y="${H-pb+16}" text-anchor="middle">${m}</text>`;
-    s+=`<text x="${W-pr}" y="${H-4}" text-anchor="end">meses</text><text x="4" y="${pt+8}">cm</text>`;
+    const step = ref==="who"?6:ref==="cdc"?3:24;
+    for(let m=minM;m<=maxM;m+=step) s+=`<line x1="${X(m)}" x2="${X(m)}" y1="${pt}" y2="${H-pb}" stroke="var(--line)" stroke-width="1" opacity=".6"/><text x="${X(m)}" y="${H-pb+16}" text-anchor="middle">${ref==="uk"?m/12:m}</text>`;
+    s+=`<text x="${W-pr}" y="${H-4}" text-anchor="end">${ref==="uk"?"años":"meses"}</text><text x="4" y="${pt+8}">cm</text>`;
     for(const [z,lab] of lines){
       const d = pts.map((m,i)=>`${i?"L":"M"}${X(m).toFixed(1)},${Y(xOf(z,get(m))).toFixed(1)}`).join("");
       const strong = z===0, ext = Math.abs(z)>=1.88;
       s+=`<path d="${d}" fill="none" stroke="${strong?"var(--accent)":ext?"var(--bad)":"var(--muted)"}" stroke-width="${strong?2:1.4}" ${Math.abs(z)>2.5?'stroke-dasharray="4 3"':""}/>`;
       s+=`<text x="${W-pr+4}" y="${Y(xOf(z,get(maxM)))+4}">${lab}</text>`;
     }
-    if(ad!=null && hc!=null && ad/DPM<=maxM) s+=`<circle cx="${X(ad/DPM)}" cy="${Y(hc)}" r="5.5" fill="var(--ink)" stroke="var(--surface)" stroke-width="2"/>`;
+    const am = ad==null?null:ad/DPM;
+    if(am!=null && hc!=null && am>=minM && am<=maxM) s+=`<circle cx="${X(am)}" cy="${Y(hc)}" r="5.5" fill="var(--ink)" stroke="var(--surface)" stroke-width="2"/>`;
     $("#chart").innerHTML = s+"</svg>";
   }
   $("#view").oninput = calc;
