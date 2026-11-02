@@ -112,6 +112,9 @@ details.cat .tile:hover{border-color:var(--accent)}
 .big{font-family:var(--mono);font-size:1.8rem;font-weight:700;line-height:1.1}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:.92rem}
 .kv dt{color:var(--muted)} .kv dd{margin:0;font-family:var(--mono)}
+.pic-row{display:grid;grid-template-columns:160px 1fr;gap:12px;align-items:center;margin-top:6px}
+.pic{width:160px;height:auto;background:var(--accent-soft);border-radius:8px}
+@media (max-width:420px){.pic-row{grid-template-columns:1fr}.pic{width:100%;max-width:260px}}
 .chart{overflow-x:auto} .chart svg{display:block;width:100%;height:auto;min-width:300px}
 .chart text{fill:var(--muted);font-family:var(--body);font-size:13px}
 table.t{border-collapse:collapse;width:100%;font-size:.92rem}
@@ -281,14 +284,14 @@ function bar(html){ const b=$("#bar"); if(!html){ b.hidden=true; bar.last=null; 
 const ROUTES = [
   ["inicio","Inicio"],["edad","Edad corregida"],["pc","Perímetro craneano"],["pcrn","PC al nacer"],["finnegan","Finnegan"],["sarnat","Sarnat"],["bind","BIND"],["hitos","Hitos del desarrollo"],["mchat","M-CHAT-R"],["gmfcs","GMFCS"],
   ["tardieu","Tardieu"],["tono","Ashworth / MRC"],["sprs","SPRS"],["sara","SARA"],["bfm","Burke-Fahn-Marsden"],["ygtss","YGTSS"],
-  ["pedmidas","PedMIDAS"],["gcs","Glasgow"]
+  ["beighton","Beighton"],["marfan","Marfan"],["pedmidas","PedMIDAS"],["gcs","Glasgow"]
 ];
 function route(){
   const id = (location.hash||"#inicio").slice(1);
   const r = ROUTES.find(x=>x[0]===id) ? id : "inicio";
   $("#nav").innerHTML = ROUTES.map(([k,l])=>`<a href="#${k}" class="${k===r?"on":""}">${l}</a>`).join("");
   bar(null); $("#view").onchange=null; $("#view").oninput=null;
-  ({inicio:viewHome, pc:viewPC, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm, edad:viewEdad, pcrn:viewPcrn, hitos:viewHitos}[r] || (()=>viewScale(r)))();
+  ({inicio:viewHome, pc:viewPC, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm, edad:viewEdad, pcrn:viewPcrn, hitos:viewHitos, beighton:viewBeighton}[r] || (()=>viewScale(r)))();
   window.scrollTo(0,0);
 }
 window.addEventListener("hashchange", route);
@@ -311,7 +314,9 @@ function viewHome(){
     edad:["Edad corregida","Cronológica, corregida, postmenstrual y fecha de término."],
     pcrn:["PC al nacer (Alarcón-Pittaluga)","Curva chilena por edad gestacional, 24–42 semanas."],
     hitos:["Hitos del desarrollo","Hitos esperados para la edad (CDC/AAP 2022) y cociente de desarrollo."],
-    bind:["BIND","Encefalopatía por hiperbilirrubinemia, 0–9."]
+    bind:["BIND","Encefalopatía por hiperbilirrubinemia, 0–9."],
+    beighton:["Beighton","Hiperlaxitud articular, 0–9, con ilustración de cada maniobra."],
+    marfan:["Marfan: score sistémico","Ghent revisado 2010, 0–20; ≥7 compromiso sistémico."]
   };
   const CATS = [
     ["Recién nacido",["edad","pcrn","pc","bind","finnegan","sarnat"]],
@@ -319,6 +324,7 @@ function viewHome(){
     ["Tono y función motora",["tardieu","tono","sprs","gmfcs"]],
     ["Trastornos del movimiento",["bfm","ygtss","sara"]],
     ["Cefalea",["pedmidas"]],
+    ["Tejido conectivo",["beighton","marfan"]],
     ["Urgencia",["gcs"]]
   ];
   $("#view").innerHTML = `<div class="hero"><svg viewBox="0 0 100 100" width="88" height="88" aria-hidden="true"><g fill="none" stroke="#14485A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" fill="#FF7A59"/></svg><span class="w">Escalas Neuropediatría</span><span class="t">Neuropediatría · Universidad de Valparaíso</span></div>
@@ -353,7 +359,8 @@ const KW = {
   finnegan:"abstinencia sindrome de abstinencia neonatal opioides drogas", sarnat:"asfixia encefalopatia hipoxico isquemica eihi hipotermia",
   mchat:"autismo tea tamizaje desarrollo", gmfcs:"paralisis cerebral funcion motora gruesa", tardieu:"espasticidad paralisis cerebral toxina botulinica",
   tono:"espasticidad tono fuerza ashworth mrc", sprs:"paraparesia espastica hereditaria peh hsp", sara:"ataxia cerebelo",
-  bfm:"distonia burke fahn marsden bfmdrs", ygtss:"tics tourette yale", pedmidas:"cefalea migrana jaqueca discapacidad", gcs:"glasgow coma conciencia tec trauma urgencia"
+  bfm:"distonia burke fahn marsden bfmdrs", ygtss:"tics tourette yale", pedmidas:"cefalea migrana jaqueca discapacidad", beighton:"hiperlaxitud laxitud articular hipermovilidad ehlers danlos sed", marfan:"marfan ghent fbn1 aracnodactilia ectopia lentis aorta tejido conectivo envergadura",
+  gcs:"glasgow coma conciencia tec trauma urgencia"
 };
 
 // ---------- escalas genéricas (SARA, SPRS, Glasgow) ----------
@@ -380,13 +387,14 @@ function viewScale(id){
       ${it.hint?`<p class="hint">${esc(it.hint)}</p>`:""}
       <div class="opts" role="radiogroup">${os.map(o=>`<label class="opt"><input type="radio" name="i${k}" value="${o.s}" ${st.v[k]===o.s?"checked":""}><span class="n">${o.n}</span><span>${esc(o.t)}</span></label>`).join("")}</div></div>`;
   }).join("");
-  $("#view").innerHTML = `<h1>${S.title}</h1><p class="lede">${S.full}. ${S.lede}</p>${agesel}<div class="stack" id="items">${html}</div><p class="ref" style="margin-top:16px">${esc(S.ref)}</p>`;
+  $("#view").innerHTML = `<h1>${S.title}</h1><p class="lede">${S.full}. ${S.lede}</p>${agesel}<div class="stack" id="items">${html}${S.after?S.after():""}</div><p class="ref" style="margin-top:16px">${esc(S.ref)}</p>`;
   $("#view").onchange = e => {
     const n = e.target.name;
     if(n==="age"){ st.age=e.target.value; viewScale(id); return; }
     const m = n.match(/^i(\d+)([di]?)$/); if(!m) return;
     st.v[m[1]+m[2]] = Number(e.target.value); update();
   };
+  S.wire?.();
   function itemScore(k){
     const it=S.items[k];
     if(it.bilateral){ const d=st.v[k+"d"], i=st.v[k+"i"]; return (d==null||i==null)?null:(d+i)/2; }
@@ -634,6 +642,129 @@ ygtss: {
   }
 }
 });
+
+// ---------- Beighton ----------
+// Pictogramas propios (vista lateral); trazo azul = segmento, coral = ángulo a evaluar, gris = referencia.
+const PIC = (inner, lab) => `<svg class="pic" viewBox="0 0 160 100" role="img" aria-label="${lab}"><g fill="none" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`;
+const L = 'stroke="var(--accent)" stroke-width="9"', R = 'stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"', A = 'stroke="var(--coral)" stroke-width="2.5"';
+const TX = (x,y,t) => `<text x="${x}" y="${y}" fill="var(--coral)" stroke="none" font-size="13" font-weight="600" font-family="var(--body)">${t}</text>`;
+const BEIGHTON_PICS = [
+  // 1. Dorsiflexión pasiva del 5.º dedo >90°: antebrazo y palma sobre la mesa, meñique llevado hacia atrás
+  PIC(`<line x1="6" y1="88" x2="154" y2="88" stroke="var(--line)" stroke-width="2"/>
+    <path d="M8 76 H66" ${L} stroke-width="14"/><path d="M66 78 H106" ${L} stroke-width="12"/>
+    <path d="M106 80 H138" ${L} stroke-width="5" opacity=".35"/>
+    <path d="M106 76 L92 34" ${L} stroke-width="5"/>
+    <path d="M106 80 V22" ${R}/>
+    <path d="M106 52 A28 28 0 0 0 97.2 53.4" ${A}/>${TX(112,40,"&gt;90°")}`, "Dorsiflexión pasiva del quinto dedo mayor de 90 grados"),
+  // 2. Aposición pasiva del pulgar: muñeca en flexión, el pulgar toca la cara flexora del antebrazo
+  PIC(`<path d="M8 34 H100" ${L} stroke-width="14"/>
+    <path d="M102 36 Q122 42 124 84" ${L} stroke-width="12"/>
+    <path d="M110 52 Q100 58 84 44" ${L} stroke-width="5"/>
+    <circle cx="82" cy="43" r="5" fill="var(--coral)" stroke="none"/>
+    <path d="M150 64 Q146 84 130 90" stroke="var(--muted)" stroke-width="2"/><path d="M130 90 l6 -6 m-6 6 l8 2" stroke="var(--muted)" stroke-width="2"/>`, "Aposición pasiva del pulgar a la cara flexora del antebrazo"),
+  // 3. Hiperextensión del codo >10°
+  PIC(`<path d="M10 40 L76 54" ${L} stroke-width="12"/><path d="M76 54 L138 46" ${L} stroke-width="10"/>
+    <circle cx="144" cy="45" r="6" fill="var(--accent)" stroke="none"/>
+    <path d="M76 54 L146 69" ${R}/>
+    <path d="M116 62.5 A41 41 0 0 0 116.6 49" ${A}/>${TX(120,90,"&gt;10°")}`, "Hiperextensión del codo mayor de 10 grados"),
+  // 4. Hiperextensión de la rodilla >10° (de pie, vista lateral; la rodilla se arquea hacia atrás)
+  PIC(`<path d="M64 8 L80 50" ${L} stroke-width="14"/><path d="M80 50 L68 88" ${L} stroke-width="10"/><path d="M66 92 H90" ${L} stroke-width="6"/>
+    <path d="M80 50 L95 90" ${R}/>
+    <path d="M90.5 78 A30 30 0 0 1 71 78.6" ${A}/>${TX(98,72,"&gt;10°")}`, "Hiperextensión de la rodilla mayor de 10 grados"),
+  // 5. Flexión del tronco con rodillas extendidas y palmas planas en el suelo
+  PIC(`<line x1="6" y1="92" x2="154" y2="92" stroke="var(--line)" stroke-width="2"/>
+    <path d="M110 34 L110 88" ${L} stroke-width="11"/><path d="M106 90 H122" ${L} stroke-width="6"/>
+    <path d="M110 34 Q96 40 92 64" ${L} stroke-width="13"/>
+    <circle cx="94" cy="76" r="7" fill="var(--accent)" stroke="none"/>
+    <path d="M96 52 L82 88" ${L} stroke-width="6"/><path d="M70 90 H90" ${A} stroke-width="5"/>`, "Flexión anterior del tronco con palmas apoyadas en el suelo y rodillas extendidas")
+];
+const BEIGHTON_ITEMS = [
+  ["Dorsiflexión pasiva del 5.º dedo >90°", true, "Mano apoyada en la mesa; llevar el meñique hacia atrás en la articulación metacarpofalángica."],
+  ["Aposición pasiva del pulgar a la cara flexora del antebrazo", true, "Con la muñeca en flexión, el pulgar llega a tocar el antebrazo."],
+  ["Hiperextensión del codo >10°", true, "Brazo extendido; medir con goniómetro si hay duda."],
+  ["Hiperextensión de la rodilla >10°", true, "De pie o en decúbito supino; medir con goniómetro si hay duda."],
+  ["Flexión del tronco con palmas apoyadas en el suelo y rodillas extendidas", false, "Ambas palmas planas en el suelo, sin flectar las rodillas."]
+];
+const BEIGHTON_CUT = {pre:["Prepuberal",6], pub:["Puberal hasta 50 años",5], may:["Mayor de 50 años",4]};
+function viewBeighton(){
+  const st = ST.beighton ||= {v:{}, age:"pre"};
+  $("#view").innerHTML = `<h1>Beighton</h1>
+  <p class="lede">Puntaje de Beighton para hiperlaxitud articular generalizada. 9 puntos: un punto por lado en las 4 primeras maniobras y uno por la flexión del tronco. Marque solo las maniobras positivas.</p>
+  <div class="card" style="margin-bottom:12px"><div class="field"><label>Grupo de edad (punto de corte)</label><div class="seg">
+    ${Object.entries(BEIGHTON_CUT).map(([k,[t,c]])=>`<label><input type="radio" name="age" value="${k}" ${st.age===k?"checked":""}><span>${t} (≥${c})</span></label>`).join("")}</div></div></div>
+  <div class="stack">${BEIGHTON_ITEMS.map(([name,bil,hint],k)=>`<div class="card"><div class="item-h"><h2>${k+1}. ${esc(name)}</h2><span class="sc" id="sc${k}"></span></div>
+    <div class="pic-row">${BEIGHTON_PICS[k]}<div><p class="hint" style="margin-top:0">${esc(hint)}</p>
+    <div class="seg">${(bil?[["d","Derecha"],["i","Izquierda"]]:[["u","Positivo"]]).map(([s,t])=>`<label><input type="checkbox" name="b${k}${s}" ${st.v[k+s]?"checked":""}><span>${t}</span></label>`).join("")}</div></div></div></div>`).join("")}</div>
+  <p class="ref" style="margin-top:16px">Beighton P, Solomon L, Soskolne CL. Ann Rheum Dis 1973;32:413–8. Puntos de corte por edad de los criterios de SED hiperlaxo 2017 (Malfait F, et al. Am J Med Genet C 2017;175:8–26): ≥6 prepuberal, ≥5 puberal hasta 50 años, ≥4 mayor de 50 años. En niños pequeños la laxitud es fisiológica y el puntaje tiene menor especificidad. Ilustraciones esquemáticas propias.</p>`;
+  const upd = () => {
+    let tot=0;
+    BEIGHTON_ITEMS.forEach(([,bil],k)=>{ const s = bil ? (st.v[k+"d"]?1:0)+(st.v[k+"i"]?1:0) : (st.v[k+"u"]?1:0); $("#sc"+k).textContent = s+"/"+(bil?2:1); tot+=s; });
+    const [gt,cut] = BEIGHTON_CUT[st.age], pos = tot>=cut;
+    const I = pos ? {cls:"bad", txt:`Hiperlaxitud generalizada (≥${cut})`} : {cls:"ok", txt:`Bajo el corte (≥${cut})`};
+    bar(`<span class="total num">${tot}<small> / 9</small></span><span class="pill ${I.cls}">${I.txt}</span>
+      <span class="spacer"></span><button id="clr">Limpiar</button><button class="pri" id="cp">Copiar resumen</button>`);
+    $("#clr").onclick=()=>{ st.v={}; viewBeighton(); };
+    $("#cp").onclick=()=>{
+      const det = BEIGHTON_ITEMS.map(([n,bil],k)=> bil ? `${n.split(" >")[0].split(" a la")[0]}: D${st.v[k+"d"]?"+":"−"} I${st.v[k+"i"]?"+":"−"}` : `Flexión de tronco: ${st.v[k+"u"]?"+":"−"}`).join("; ");
+      copy(`Beighton: ${tot}/9 – ${I.txt.toLowerCase()}, grupo ${gt.toLowerCase()}. ${det}.`);
+    };
+  };
+  $("#view").onchange = e => {
+    const n=e.target.name;
+    if(n==="age"){ st.age=e.target.value; upd(); return; }
+    const m=n.match(/^b(\d)([diu])$/); if(m){ st.v[m[1]+m[2]]=e.target.checked; upd(); }
+  };
+  upd();
+}
+
+// ---------- Marfan: score sistémico (Ghent revisado 2010) ----------
+Object.assign(SCALES, {
+marfan: {
+  title:"Marfan: score sistémico", full:"Puntaje de compromiso sistémico de la nosología de Ghent revisada (2010)",
+  lede:"Total 0–20. Un puntaje ≥7 indica compromiso sistémico. Todos los ítems parten en 0; marque solo lo presente.",
+  ref:"Loeys BL, et al. The revised Ghent nosology for the Marfan syndrome. J Med Genet 2010;47:476–85. Sin historia familiar, el diagnóstico se establece con: dilatación de raíz aórtica (Z ≥2) + ectopia lentis; Ao (Z ≥2) + variante patogénica FBN1; Ao (Z ≥2) + score sistémico ≥7; o ectopia lentis + FBN1 asociada a enfermedad aórtica. Con historia familiar: ectopia lentis, score ≥7 o Ao (Z ≥2 en mayores de 20 años, ≥3 en menores de 20). En menores de 20 años sin criterios completos se prefiere hablar de Marfan potencial o trastorno inespecífico del tejido conectivo y reevaluar en el seguimiento. Descartar diagnósticos diferenciales (Loeys-Dietz, Shprintzen-Goldberg, Ehlers-Danlos vascular, homocistinuria).",
+  defaultZero:true,
+  items:[
+    {name:"Signo de la muñeca y del pulgar", hint:"Muñeca (Walker-Murdoch): pulgar y meñique se superponen al rodear la muñeca contraria. Pulgar (Steinberg): la falange distal del pulgar sobresale del borde cubital de la mano empuñada.", opts:[[0,"Ninguno"],[1,"Solo uno de los dos"],[3,"Ambos"]]},
+    {name:"Deformidad torácica", opts:[[0,"No"],[1,"Pectus excavatum o asimetría torácica"],[2,"Pectus carinatum"]]},
+    {name:"Retropié", opts:[[0,"Normal"],[1,"Pie plano simple"],[2,"Deformidad del retropié (valgo del retropié con antepié en abducción y pie plano)"]]},
+    {name:"Neumotórax", opts:[[0,"No"],[2,"Sí"]]},
+    {name:"Ectasia dural", opts:[[0,"No"],[2,"Sí"]]},
+    {name:"Protrusión acetabular", opts:[[0,"No"],[2,"Sí"]]},
+    {name:"Segmento superior/inferior bajo y envergadura/talla alta, sin escoliosis severa", hint:"Envergadura/talla >1,05. SS/SI reducido: <0,85 en adultos blancos y <0,78 en adultos negros; en niños <1 (0–5 años), <0,95 (6–7), <0,9 (8–9) y <0,85 (≥10 años). Use la calculadora de abajo.", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Escoliosis o cifosis toracolumbar", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Extensión del codo reducida", hint:"Extensión completa ≤170°.", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Rasgos faciales (al menos 3 de 5)", hint:"Dolicocefalia, enoftalmos, fisuras palpebrales oblicuas hacia abajo, hipoplasia malar, retrognatia.", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Estrías cutáneas", hint:"Sin explicación por cambios de peso.", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Miopía >3 dioptrías", opts:[[0,"No"],[1,"Sí"]]},
+    {name:"Prolapso de válvula mitral (de cualquier tipo)", opts:[[0,"No"],[1,"Sí"]]}
+  ],
+  interpret:t=> t>=7 ? {cls:"bad", txt:"≥7: compromiso sistémico presente"} : {cls:"ok", txt:"<7: no alcanza compromiso sistémico"}
+}
+});
+SCALES.marfan.after = () => `<div class="card"><h2>Calculadora de proporciones</h2>
+  <p class="hint">Segmento inferior = sínfisis del pubis al suelo, de pie. Segmento superior = talla − segmento inferior.</p>
+  <div class="row" style="margin-top:8px">
+    <div class="field"><label for="mfa">Edad (años)</label><input id="mfa" type="number" inputmode="decimal" min="0" max="99"></div>
+    <div class="field"><label for="mft">Talla (cm)</label><input id="mft" type="number" inputmode="decimal" min="40" max="230"></div>
+    <div class="field"><label for="mfe">Envergadura (cm)</label><input id="mfe" type="number" inputmode="decimal" min="40" max="250"></div>
+    <div class="field"><label for="mfi">Segmento inferior (cm)</label><input id="mfi" type="number" inputmode="decimal" min="20" max="130"></div></div>
+  <div class="field" style="margin-top:8px"><label>Población (adultos)</label><div class="seg">
+    <label><input type="radio" name="mfp" value="b" checked><span>Blanca / otra</span></label><label><input type="radio" name="mfp" value="n"><span>Negra</span></label></div></div>
+  <div id="mfo" style="margin-top:10px"></div></div>`;
+SCALES.marfan.wire = () => {
+  const num = id => { const v=$("#"+id).value; return v===""?null:Number(v.replace(",",".")); };
+  const f = () => {
+    const a=num("mfa"), t=num("mft"), e=num("mfe"), i=num("mfi"), neg=document.querySelector("[name=mfp]:checked")?.value==="n";
+    const out=[];
+    if(t&&e){ const r=e/t; out.push(`<dt>Envergadura/talla</dt><dd>${fmt(r,2)} <span class="pill ${r>1.05?"bad":"ok"}">${r>1.05?"aumentada (>1,05)":"no aumentada"}</span></dd>`); }
+    if(t&&i&&a!=null){ const r=(t-i)/i, c = a<6?1:a<8?0.95:a<10?0.9:a<18?0.85:(neg?0.78:0.85);
+      out.push(`<dt>SS/SI</dt><dd>${fmt(r,2)} <span class="pill ${r<c?"bad":"ok"}">${r<c?`reducido (<${fmt(c,2)})`:`no reducido (corte ${fmt(c,2)})`}</span></dd>`); }
+    $("#mfo").innerHTML = out.length?`<dl class="kv">${out.join("")}</dl>`:`<p class="hint">Complete edad, talla, envergadura y segmento inferior.</p>`;
+  };
+  ["mfa","mft","mfe","mfi"].forEach(id=>$("#"+id).addEventListener("input",f));
+  document.querySelectorAll("[name=mfp]").forEach(x=>x.addEventListener("change",f)); f();
+};
 
 // ---------- Edad corregida ----------
 const addDays = (isoD, n) => { const d=new Date(isoD+"T00:00:00Z"); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); };
