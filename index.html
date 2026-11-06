@@ -282,7 +282,7 @@ function bar(html){ const b=$("#bar"); if(!html){ b.hidden=true; bar.last=null; 
 
 // ---------- navegación ----------
 const ROUTES = [
-  ["inicio","Inicio"],["edad","Edad corregida"],["pc","Perímetro craneano"],["pcrn","PC al nacer"],["finnegan","Finnegan"],["sarnat","Sarnat"],["bind","BIND"],["hitos","Hitos del desarrollo"],["mchat","M-CHAT-R"],["gmfcs","GMFCS"],
+  ["inicio","Inicio"],["edad","Edad corregida"],["pc","Perímetro craneano"],["pcrn","PC al nacer"],["finnegan","Finnegan"],["sarnat","Sarnat"],["bind","BIND"],["hitos","Hitos del desarrollo"],["mchat","M-CHAT-R"],["amse","AMSE"],["gmfcs","GMFCS"],
   ["tardieu","Tardieu"],["tono","Ashworth / MRC"],["sprs","SPRS"],["sara","SARA"],["bfm","Burke-Fahn-Marsden"],["ygtss","YGTSS"],
   ["beighton","Beighton"],["marfan","Marfan"],["pedmidas","PedMIDAS"],["gcs","Glasgow"]
 ];
@@ -302,6 +302,7 @@ function viewHome(){
     finnegan:["Finnegan modificada","Abstinencia neonatal, con umbrales de tratamiento."],
     sarnat:["Sarnat modificada","Encefalopatía hipóxico-isquémica y criterio neurológico de hipotermia."],
     mchat:["M-CHAT-R","Puntuación del cuestionario de autismo, 16–30 meses."],
+    amse:["AMSE","Examen del estado mental en autismo, 0–14; corte ≥5."],
     gmfcs:["GMFCS E&R","Función motora gruesa por franja de edad, niveles I–V."],
     tardieu:["Tardieu modificada","Ángulos R1 y R2 y calidad de la reacción por músculo."],
     tono:["Ashworth modificada / MRC","Tablas de referencia de tono y fuerza."],
@@ -320,7 +321,7 @@ function viewHome(){
   };
   const CATS = [
     ["Recién nacido",["edad","pcrn","pc","bind","finnegan","sarnat"]],
-    ["Lactante y desarrollo",["hitos","edad","pc","mchat","gmfcs"]],
+    ["Lactante y desarrollo",["hitos","edad","pc","mchat","amse","gmfcs"]],
     ["Tono y función motora",["tardieu","tono","sprs","gmfcs"]],
     ["Trastornos del movimiento",["bfm","ygtss","sara"]],
     ["Cefalea",["pedmidas"]],
@@ -357,7 +358,7 @@ const KW = {
   edad:"prematuro pretermino edad gestacional postmenstrual", pcrn:"perimetro cefalico circunferencia craneana microcefalia prematuro pretermino curva chilena intrauterino",
   pc:"circunferencia craneana perimetro cefalico microcefalia macrocefalia oms who cdc uk90 nellhaus percentil escolar adolescente", bind:"ictericia hiperbilirrubinemia kernicterus bilirrubina",
   finnegan:"abstinencia sindrome de abstinencia neonatal opioides drogas", sarnat:"asfixia encefalopatia hipoxico isquemica eihi hipotermia",
-  mchat:"autismo tea tamizaje desarrollo", gmfcs:"paralisis cerebral funcion motora gruesa", tardieu:"espasticidad paralisis cerebral toxina botulinica",
+  mchat:"autismo tea tamizaje desarrollo", amse:"autismo tea espectro autista examen estado mental grodberg pesquisa adulto", gmfcs:"paralisis cerebral funcion motora gruesa", tardieu:"espasticidad paralisis cerebral toxina botulinica",
   tono:"espasticidad tono fuerza ashworth mrc", sprs:"paraparesia espastica hereditaria peh hsp", sara:"ataxia cerebelo",
   bfm:"distonia burke fahn marsden bfmdrs", ygtss:"tics tourette yale", pedmidas:"cefalea migrana jaqueca discapacidad", beighton:"hiperlaxitud laxitud articular hipermovilidad ehlers danlos sed", marfan:"marfan ghent fbn1 aracnodactilia ectopia lentis aorta tejido conectivo envergadura",
   gcs:"glasgow coma conciencia tec trauma urgencia"
@@ -765,6 +766,28 @@ SCALES.marfan.wire = () => {
   ["mfa","mft","mfe","mfi"].forEach(id=>$("#"+id).addEventListener("input",f));
   document.querySelectorAll("[name=mfp]").forEach(x=>x.addEventListener("change",f)); f();
 };
+
+
+// ---------- AMSE: solo resumen breve de puntuación; usar la planilla oficial (© Grodberg / Mt Sinai) ----------
+Object.assign(SCALES, {
+amse: {
+  title:"AMSE", full:"Examen del Estado Mental en Autismo (Autism Mental Status Exam)", max:14,
+  lede:"8 ítems de 0 a 2 registrados durante la entrevista clínica; total 0–14. Puntúe con la planilla y el manual oficiales; aquí se muestra solo un resumen breve de cada nivel.",
+  ref:"Grodberg D, et al. J Autism Dev Disord 2012;42:455–9 y 2014;44:609–14. Punto de corte ≥5: sensibilidad 94% y especificidad 81% frente al ADOS en población de alto riesgo (PMID 31106247). En adultos verbales con criterios DSM-5: sensibilidad 91% y especificidad 93%. Apoya el juicio clínico, no diagnostica por sí solo. Planilla y manual en español (traducción de R. Olmedo y S. Cukier, PANAACEA), gratuitos para uso clínico: amse.panaacea.org. © 2011 The Icahn School of Medicine at Mt. Sinai. Todos los derechos reservados.",
+  items:[
+    {name:"Contacto visual", hint:"Observado.", opts:[[0,"Sostenido (3 s o más)"],[1,"Fluctuante"],[2,"Ausente"]]},
+    {name:"Interés en otros", hint:"Observado.", opts:[[0,"Inicia interacción con el examinador"],[1,"Solo responde pasivamente"],[2,"Sin interés"]]},
+    {name:"Habilidad para señalar", hint:"Observado. En niños, pedir que muestre algo; si no lo hace, señalar un objeto y ver si sigue con la mirada.", opts:[[0,"Señala o hace gestos hacia el objeto"],[1,"Sigue el señalamiento con la mirada, pero no señala"],[2,"Ninguna"]]},
+    {name:"Lenguaje", hint:"Reportado u observado: basta con que la familia reporte el nivel más alto. La dificultad de articulación no puntúa.", opts:[[0,"Habla de otro tiempo o lugar"],[1,"Palabras sueltas, frases cortas u oraciones incompletas"],[2,"No verbal"]]},
+    {name:"Pragmática del lenguaje", hint:"No aplica (0) si Lenguaje es 1 o 2. Turnos o tópicos, entonación peculiar o monótona.", opts:[[0,"No afectada, o no aplica"],[1,"Alteración solo reportada"],[2,"Alteración observada en la entrevista"]]},
+    {name:"Estereotipias / conductas repetitivas", hint:"Reportado u observado.", opts:[[0,"Ninguna"],[1,"Conductas compulsivas o rutinas rígidas"],[2,"Estereotipias motoras o vocales, ecolalia o lenguaje estereotipado"]]},
+    {name:"Preocupaciones inusuales o absorbentes", hint:"Presentes en las últimas 2 semanas.", opts:[[0,"Ninguna"],[1,"Reportada, no observada"],[2,"Surge espontáneamente y se observa en la entrevista"]]},
+    {name:"Sensibilidades inusuales", hint:"Reactividad sensorial elevada o umbral alto al dolor.", opts:[[0,"Ninguna"],[1,"Reportada, no observada"],[2,"Observada en la entrevista"]]}
+  ],
+  interpret:(t,sc)=> sc[3]>=1 && sc[4]>0 ? {cls:"warn", txt:"Revise: pragmática no aplica (0) cuando Lenguaje es 1 o 2"}
+    : t>=5 ? {cls:"bad", txt:"≥5: apoya la sospecha clínica de TEA"} : {cls:"ok", txt:"<5: bajo el punto de corte"}
+}
+});
 
 // ---------- Edad corregida ----------
 const addDays = (isoD, n) => { const d=new Date(isoD+"T00:00:00Z"); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); };
