@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#14485A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Escalas">
+<script>try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -23,6 +24,18 @@
   --mono:var(--body);
   color-scheme:light;
 }
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1A1F; --surface:#17252C; --ink:#E6EEF1; --muted:#9DB0B8; --line:#2B3D45;
+  --accent:#7CC4D8; --accent-soft:#1E3A45; --on-accent:#0F1A1F; --coral:#FF8F73;
+  --ok:#7FD1A0; --ok-soft:#173626; --warn:#E8C860; --warn-soft:#3A3212; --bad:#FF8A8A; --bad-soft:#40201F;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0F1A1F; --surface:#17252C; --ink:#E6EEF1; --muted:#9DB0B8; --line:#2B3D45;
+  --accent:#7CC4D8; --accent-soft:#1E3A45; --on-accent:#0F1A1F; --coral:#FF8F73;
+  --ok:#7FD1A0; --ok-soft:#173626; --warn:#E8C860; --warn-soft:#3A3212; --bad:#FF8A8A; --bad-soft:#40201F;
+  color-scheme:dark;
+}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 a{color:var(--accent)}
@@ -30,16 +43,32 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-variant-
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
 .wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.brand{display:flex;align-items:center;gap:10px;padding-block:10px 4px;text-decoration:none}
+.brand{display:flex;align-items:center;gap:10px;padding-block:8px;text-decoration:none}
 .brand .k{display:block;font-size:.8rem;font-weight:600;color:var(--coral);line-height:1}
 .brand .w{display:block;font-weight:800;font-size:1.3rem;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
 .hero{display:flex;flex-direction:column;align-items:center;text-align:center;margin:8px 0 24px}
 .hero .k{font-size:1.1rem;font-weight:600;color:var(--coral);margin-top:10px}
 .hero .w{font-size:clamp(1.8rem,8vw,2.4rem);font-weight:800;color:var(--accent);letter-spacing:-.03em;line-height:1.05;margin-top:12px;text-wrap:balance}
 .hero .t{font-size:.85rem;color:var(--muted);margin-top:6px}
-nav{display:flex;gap:6px;overflow-x:auto;padding-block:6px 10px;scrollbar-width:none}
-nav a{flex:none;font-size:.85rem;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;white-space:nowrap}
-nav a.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.hbar{display:flex;align-items:center;gap:8px}
+.hbar .brand{flex:1;min-width:0}
+.ibtn{flex:none;width:38px;height:38px;padding:0;border-radius:999px;display:grid;place-items:center;color:var(--accent)}
+.crumb{display:flex;align-items:center;gap:8px;padding-block:2px 8px;font-size:.9rem}
+.crumb a{text-decoration:none;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink);white-space:nowrap}
+.crumb a.cs{background:var(--accent-soft);border-color:transparent;color:var(--accent);font-weight:600}
+.crumb button{border-radius:999px;padding:5px 11px;font-size:.9rem}
+.crumb button[aria-pressed=true]{color:var(--coral);border-color:var(--coral)}
+.tw{position:relative;display:flex}
+.tw .tile{flex:1;padding-right:44px}
+.star{position:absolute;top:6px;right:6px;width:36px;height:36px;padding:0;border:0;background:none;font-size:1.25rem;line-height:1;color:var(--muted)}
+.star[aria-pressed=true]{color:var(--coral)}
+#ptd>summary{flex-wrap:wrap;row-gap:2px}
+#ptd>summary::after{margin-left:auto}
+#ptd>summary .c{order:3;flex-basis:100%;margin-left:0}
+.sec{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px}
+.suml{list-style:none;margin:8px 0 12px;padding:0;display:flex;flex-direction:column;gap:8px;font-size:.92rem}
+.suml li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;border-bottom:1px solid var(--line);padding-bottom:8px}
+.suml button{font-size:.8rem;padding:3px 8px}
 main{padding-block:20px 40px}
 h1{font-family:var(--display);font-weight:800;font-size:1.7rem;line-height:1.15;margin:0 0 4px;text-wrap:balance;letter-spacing:-.015em}
 h2{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:0;text-wrap:balance}
@@ -152,10 +181,11 @@ footer{color:var(--muted);font-size:.8rem;padding-block:24px}
 </head>
 <body>
 <header>
-  <div class="wrap">
-    <a class="brand" href="#inicio"><svg viewBox="0 0 100 100" width="36" height="36" aria-hidden="true"><g fill="none" stroke="#14485A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" fill="#FF7A59"/></svg><span><span class="w">Escalas Neuropediatría</span></span></a>
-    <nav id="nav"></nav>
+  <div class="wrap hbar">
+    <a class="brand" href="#inicio"><svg viewBox="0 0 100 100" width="36" height="36" aria-hidden="true"><g fill="none" style="stroke:var(--accent)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" style="fill:var(--coral)"/></svg><span><span class="w">Escalas Neuropediatría</span></span></a>
+    <button class="ibtn" id="thm" aria-label="Cambiar entre modo claro y oscuro"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>
   </div>
+  <div class="wrap crumb" id="crumb" hidden></div>
 </header>
 <main><div class="wrap" id="view"></div></main>
 <div class="result" id="bar" hidden><div class="wrap" id="barin"></div></div>
@@ -285,15 +315,17 @@ const fmtN = x => Number.isInteger(x) ? String(x) : fmt(x, 1);
 const ST = {}; // estado por vista, solo en memoria
 
 function toast(msg){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(toast.h); toast.h=setTimeout(()=>t.hidden=true,1800); }
-function copy(text){
-  const done = () => toast("Resumen copiado");
+function copy(text, raw){
+  if(!raw && CUR!=="inicio"){ (ST.sum ||= {})[CUR] = text; hdr(); }
+  copy.msg = raw ? "Copiado" : "Copiado y agregado a la consulta";
+  const done = () => toast(copy.msg);
   try { navigator.clipboard.writeText(text).then(done, () => fallback(text)); } catch(e){ fallback(text); }
 }
 function fallback(text){
   const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
   document.body.appendChild(ta); ta.select();
   let ok=false; try{ ok=document.execCommand("copy"); }catch(e){}
-  ta.remove(); toast(ok ? "Resumen copiado" : "No se pudo copiar: " + text.slice(0,60) + "…");
+  ta.remove(); toast(ok ? copy.msg : "No se pudo copiar: " + text.slice(0,60) + "…");
 }
 function bar(html){ const b=$("#bar"); if(!html){ b.hidden=true; bar.last=null; return; } b.hidden=false;
   if(html!==bar.last){ $("#barin").innerHTML=html; bar.last=html; } } // no reemplazar botones idénticos: un blur antes del clic los perdería
@@ -307,12 +339,59 @@ const ROUTES = [
 function route(){
   const id = (location.hash||"#inicio").slice(1);
   const r = ROUTES.find(x=>x[0]===id) ? id : "inicio";
-  $("#nav").innerHTML = ROUTES.map(([k,l])=>`<a href="#${k}" class="${k===r?"on":""}">${l}</a>`).join("");
-  bar(null); $("#view").onchange=null; $("#view").oninput=null;
-  ({inicio:viewHome, pc:viewPC, ant:viewAnt, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm, edad:viewEdad, pcrn:viewPcrn, hitos:viewHitos, beighton:viewBeighton, ee:viewEE}[r] || (()=>viewScale(r)))();
+  CUR = r;
+  if(r!=="inicio"){ REC = [r, ...REC.filter(x=>x!==r)].slice(0,4); lsSet("recent", REC); }
+  hdr();
+  bar(null); $("#view").onchange=null; $("#view").oninput=null; $("#view").onclick=null;
+  const view = ({inicio:viewHome, pc:viewPC, ant:viewAnt, pedmidas:viewPedmidas, mchat:viewMchat, tono:viewTono, gmfcs:viewGmfcs, tardieu:viewTardieu, bfm:viewBfm, edad:viewEdad, pcrn:viewPcrn, hitos:viewHitos, beighton:viewBeighton, ee:viewEE}[r] || (()=>viewScale(r)));
+  view(); if(ptPull(r)) view();
   window.scrollTo(0,0);
 }
 window.addEventListener("hashchange", route);
+
+// ---------- preferencias (solo ajustes de la app, nunca datos de pacientes) ----------
+const lsGet = k => { try { const v=JSON.parse(localStorage.getItem(k)||"null"); return Array.isArray(v)?v:[]; } catch(e){ return []; } };
+const lsSet = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} };
+let CUR = "inicio", FAV = lsGet("favs"), REC = lsGet("recent");
+const favToggle = k => { FAV = FAV.includes(k) ? FAV.filter(x=>x!==k) : [...FAV, k]; lsSet("favs", FAV); };
+function hdr(){
+  const c=$("#crumb"), n=Object.keys(ST.sum||{}).length;
+  if(CUR==="inicio"){ c.hidden=true; return; }
+  c.hidden=false; const on=FAV.includes(CUR);
+  c.innerHTML = `<a href="#inicio">‹ Inicio</a><span class="spacer"></span>${n?`<a class="cs" href="#inicio">Consulta · ${n}</a>`:""}<button id="cfav" aria-pressed="${on}">${on?"★":"☆"} Favorita</button>`;
+  $("#cfav").onclick = () => { favToggle(CUR); hdr(); };
+}
+document.addEventListener("DOMContentLoaded", () => {
+  $("#thm").onclick = () => { const r=document.documentElement, dark = r.dataset.theme ? r.dataset.theme==="dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+    r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem("theme", r.dataset.theme); } catch(e){} };
+  // lo que se escribe en una calculadora actualiza al paciente de la sesión
+  const push = () => setTimeout(() => ptPush(CUR), 0);
+  $("#view").addEventListener("input", push); $("#view").addEventListener("change", push);
+  // "Limpiar" borra la escala pero conserva los datos del paciente
+  $("#bar").addEventListener("click", e => { if(e.target.id==="clr") setTimeout(() => { if(ptPull(CUR)) route(); }, 0); });
+});
+
+// ---------- paciente de la sesión (solo en memoria) ----------
+const PT_FIELDS = {edad:["dob","ga","gad"], hitos:["dob","ga","gad"], ant:["sex","dob","ga","gad","w"], pc:["sex","dob","ga","gad"], ee:["w"]};
+function ptPull(r){
+  const f=PT_FIELDS[r], st=ST[r], pt=ST.pt; if(!f||!st||!pt) return false;
+  let ch=false;
+  f.forEach(k => { if(pt[k]!==undefined && st[k]!==pt[k]){ st[k]=pt[k]; ch=true; if(k==="dob" && pt[k] && st.mode) st.mode="fechas"; } });
+  return ch;
+}
+function ptPush(r){
+  const f=PT_FIELDS[r], st=ST[r]; if(!f||!st) return;
+  const pt = ST.pt ||= {};
+  f.forEach(k => { if(st[k]!==undefined && (st[k]!=="" || pt[k]!==undefined)) pt[k]=st[k]; });
+}
+function ptLine(){
+  const pt=ST.pt||{}, a=[];
+  if(pt.sex) a.push(pt.sex==="m"?"masculino":"femenino");
+  if(pt.dob){ const d=daysBetween(pt.dob, iso(new Date())); a.push(`nacido(a) ${dmy(pt.dob)}${d>=0?` (${ageTxt(d)})`:""}`); }
+  if(pt.ga) a.push(`EG ${pt.ga} sem${+pt.gad?` + ${pt.gad} d`:""}`);
+  if(pt.w) a.push(`peso ${String(pt.w).replace(".",",")} kg`);
+  return a;
+}
 
 function viewHome(){
   const T = {
@@ -349,30 +428,76 @@ function viewHome(){
     ["Tejido conectivo",["beighton","marfan"]],
     ["Urgencia",["ee","gcs"]]
   ];
-  $("#view").innerHTML = `<div class="hero"><svg viewBox="0 0 100 100" width="88" height="88" aria-hidden="true"><g fill="none" stroke="#14485A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" fill="#FF7A59"/></svg><span class="w">Escalas Neuropediatría</span><span class="t">Neuropediatría · Universidad de Valparaíso</span></div>
-  <p class="lede">Calculadoras para la consulta. Elija una escala; al terminar use <b>Copiar resumen</b> para pegarlo en la ficha clínica.</p>
+  $("#view").innerHTML = `<div class="hero"><svg viewBox="0 0 100 100" width="88" height="88" aria-hidden="true"><g fill="none" style="stroke:var(--accent)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" style="fill:var(--coral)"/></svg><span class="w">Escalas Neuropediatría</span><span class="t">Neuropediatría · Universidad de Valparaíso</span></div>
+  <p class="lede">Calculadoras para la consulta. Al terminar una escala use <b>Copiar resumen</b>: se copia para la ficha y se suma al resumen de la consulta.</p>
   <div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
     <input id="q" type="search" placeholder="Buscar (ej. ataxia, tics, prematuro)" aria-label="Buscar escala" autocomplete="off" value="${esc(ST.q||"")}"></div>
+  <div id="hpt"></div><div id="hsum" style="margin-top:12px"></div><div id="hfav"></div>
   <div id="cats"></div>`;
-  const tile = k => `<a class="tile" href="#${k}"><b>${T[k][0]}</b><span>${T[k][1]}</span></a>`;
+  const tile = k => `<div class="tw"><a class="tile" href="#${k}"><b>${T[k][0]}</b><span>${T[k][1]}</span></a><button class="star" data-fav="${k}" aria-pressed="${FAV.includes(k)}" aria-label="${FAV.includes(k)?"Quitar de":"Agregar a"} favoritas: ${T[k][0]}">${FAV.includes(k)?"★":"☆"}</button></div>`;
+  const pt = ST.pt ||= {};
+  const drawPt = () => {
+    const a = ptLine();
+    $("#hpt").innerHTML = `<details class="cat" id="ptd" ${ST.ptOpen?"open":""}><summary>Paciente de la sesión<span class="c" id="ptsum"></span></summary>
+      <div style="padding:0 16px 14px">
+        <div class="field" style="margin-bottom:10px"><label>Sexo</label><div class="seg" role="radiogroup" aria-label="Sexo">
+          <label><input type="radio" name="ptsex" value="m" ${pt.sex==="m"?"checked":""}><span>Masculino</span></label>
+          <label><input type="radio" name="ptsex" value="f" ${pt.sex==="f"?"checked":""}><span>Femenino</span></label></div></div>
+        <div class="grid2">
+          <div class="field"><label for="ptdob">Fecha de nacimiento</label><input id="ptdob" type="date" value="${esc(pt.dob||"")}"></div>
+          <div class="field"><label for="ptw">Peso (kg)</label><input id="ptw" type="number" inputmode="decimal" step="0.01" min="0.3" max="200" value="${esc(pt.w||"")}"></div></div>
+        <div class="row" style="margin-top:12px">
+          <div class="field"><label for="ptga">EG al nacer (sem)</label><input id="ptga" type="number" inputmode="numeric" min="22" max="42" value="${esc(pt.ga||"")}"></div>
+          <div class="field"><label for="ptgad">+ días</label><input id="ptgad" type="number" inputmode="numeric" min="0" max="6" value="${esc(pt.gad||"")}"></div></div>
+        <p class="hint" style="margin:10px 0">Se ingresa una vez y se reutiliza en perímetro craneano, antropometría, hitos, edad corregida y estado epiléptico. No se guarda: se borra al cerrar la app.</p>
+        <button id="ptnew">Nuevo paciente</button>
+      </div></details>`;
+    const sumTxt = () => { const a=ptLine(); $("#ptsum").textContent = a.length ? a.join(" · ") : "Sexo, edad y peso"; };
+    sumTxt();
+    $("#ptd").addEventListener("toggle", e => { ST.ptOpen = e.target.open; });
+    $("#ptd").addEventListener("input", () => {
+      const sx=document.querySelector("input[name=ptsex]:checked"); if(sx) pt.sex=sx.value;
+      pt.dob=$("#ptdob").value; pt.w=$("#ptw").value; pt.ga=$("#ptga").value; pt.gad=$("#ptgad").value; sumTxt(); });
+    $("#ptnew").onclick = () => { if(!confirm("¿Borrar los datos del paciente, las escalas y el resumen de la consulta?")) return;
+      const q=ST.q; Object.keys(ST).forEach(k=>delete ST[k]); ST.q=q; ST.ptOpen=true; viewHome(); };
+  };
+  const drawSum = () => {
+    const S = ST.sum||{}, ks = Object.keys(S);
+    if(!ks.length){ $("#hsum").innerHTML=""; return; }
+    $("#hsum").innerHTML = `<div class="card"><div class="item-h"><h2>Resumen de la consulta</h2><span class="sc">${ks.length}</span></div>
+      <ul class="suml">${ks.map(k=>`<li><span>${esc(S[k])}</span><button data-rm="${k}" aria-label="Quitar ${esc(T[k]?.[0]||k)}">Quitar</button></li>`).join("")}</ul>
+      <div class="row"><button class="pri" id="sumcp">Copiar todo</button><button id="sumclr">Vaciar</button></div></div>`;
+    $("#sumcp").onclick = () => { const a=ptLine(); copy([a.length?`Paciente: ${a.join(", ")}.`:"", ...ks.map(k=>S[k])].filter(Boolean).join("\n"), true); };
+    $("#sumclr").onclick = () => { delete ST.sum; drawSum(); };
+    $("#hsum").querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { delete S[b.dataset.rm]; drawSum(); });
+  };
+  const drawFav = () => {
+    const fav = FAV.filter(k=>T[k]), rec = REC.filter(k=>T[k] && !fav.includes(k));
+    $("#hfav").innerHTML = (fav.length?`<h2 class="sec">Favoritas</h2><div class="tiles">${fav.map(tile).join("")}</div>`:"")
+      + (rec.length?`<h2 class="sec">Recientes</h2><div class="tiles">${rec.map(tile).join("")}</div>`:"")
+      + (fav.length||rec.length?`<h2 class="sec">Todas las escalas</h2>`:`<div style="height:12px"></div>`);
+  };
+  $("#view").onclick = e => { const b=e.target.closest("[data-fav]"); if(!b) return; favToggle(b.dataset.fav); draw(); };
   const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
   let open; try { open = JSON.parse(localStorage.getItem("cats-open")||"null"); } catch(e){}
   if(!Array.isArray(open)) open = [CATS[0][0]];
   const draw = () => {
     const q = norm(ST.q||"").trim();
+    ["hpt","hsum","hfav"].forEach(i => $("#"+i).hidden = !!q);
+    if(!q) drawFav();
     if(q){
       const hits = Object.keys(T).filter(k => q.split(/\s+/).every(w => norm(T[k].join(" ")+" "+(KW[k]||"")+" "+CATS.filter(c=>c[1].includes(k)).map(c=>c[0]).join(" ")).includes(w)));
       $("#cats").innerHTML = hits.length ? `<div class="tiles">${hits.map(tile).join("")}</div>` : `<p class="empty">No hay escalas que coincidan con "${esc(ST.q)}".</p>`;
       return;
     }
     $("#cats").innerHTML = `<div class="stack">${CATS.map(([c,ks])=>`<details class="cat" ${open.includes(c)?"open":""} data-c="${c}"><summary>${c}<span class="c">${ks.length}</span></summary><div class="tiles">${ks.map(tile).join("")}</div></details>`).join("")}</div>`;
-    document.querySelectorAll("details.cat").forEach(d=>d.addEventListener("toggle",()=>{
-      open = [...document.querySelectorAll("details.cat[open]")].map(x=>x.dataset.c);
+    document.querySelectorAll("details.cat[data-c]").forEach(d=>d.addEventListener("toggle",()=>{
+      open = [...document.querySelectorAll("details.cat[data-c][open]")].map(x=>x.dataset.c);
       try { localStorage.setItem("cats-open", JSON.stringify(open)); } catch(e){}
     }));
   };
   $("#q").addEventListener("input", e => { ST.q = e.target.value; draw(); });
-  draw();
+  drawPt(); drawSum(); draw();
 }
 const KW = {
   hitos:"desarrollo psicomotor dsm hitos cociente indice retraso vigilancia cdc",
