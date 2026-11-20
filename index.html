@@ -291,6 +291,32 @@ gcs: {
     {name:"Respuesta motora", desc:true, opts:[[6,"Obedece órdenes","Movimientos espontáneos normales"],[5,"Localiza el dolor","Retira al tacto"],[4,"Retira al dolor","Retira al dolor"],[3,"Flexión anormal (decorticación)","Flexión anormal (decorticación)"],[2,"Extensión (descerebración)","Extensión (descerebración)"],[1,"Ninguna","Ninguna"]]}
   ],
   interpret:t=>t<=8?{cls:"bad",txt:"Grave (≤8): considerar protección de vía aérea"}:t<=12?{cls:"warn",txt:"Moderado (9–12)"}:{cls:"ok",txt:"Leve (13–15)"}
+},
+case: {
+  title:"CASE", full:"Clinical Assessment Scale in Autoimmune Encephalitis", max:27,
+  lede:"Severidad de la encefalitis autoinmune: 9 ítems, cada uno 0–3, total 0–27. Puede aplicarse en cualquier fase; memoria y lenguaje se evalúan por la conversación y la observación.",
+  ref:"Lim JA, et al. Ann Neurol 2019;85:352–8. Definiciones de crisis y regla del coma según los autores, en Cai MT, et al. Neurol Ther 2021;10:985–1000. Sin puntos de corte de severidad validados; Zhang Y, et al. (Front Immunol 2021) usan como desenlace 0–4 excelente, 5–9 moderado y 10–27 malo. Copyright de la escala: Seoul National University Hospital; traducción propia.",
+  items:[
+    {name:"Crisis epilépticas", hint:"Controladas: sin crisis en el último mes con fármacos, sin necesidad de subir dosis. Refractarias: requieren subir dosis.", opts:[
+      "Sin crisis","Crisis controladas","Crisis refractarias","Estado epiléptico"]},
+    {name:"Alteración de memoria", hint:"En coma: puntuar 3.", opts:[
+      "Ninguna","Leve (no afecta las actividades diarias)","Moderada (interfiere con las actividades diarias)","Grave (sin memoria reciente o no puede comunicarse)"]},
+    {name:"Síntomas psiquiátricos", hint:"En coma: puntuar 3.", opts:[
+      "Ninguno","Leves (no requieren intervención médica; no afectan las actividades diarias)","Moderados (requieren intervención médica; interfieren con las actividades diarias)","Graves (requieren cuidado continuo u hospitalización), o no evaluables"]},
+    {name:"Conciencia", opts:[
+      "Alerta (abre los ojos espontáneamente)","Somnoliento (abre los ojos a la voz)","Estupor (abre los ojos al dolor)","Coma (no abre los ojos)"]},
+    {name:"Lenguaje", hint:"En coma: puntuar 3.", opts:[
+      "Normal","Leve (lento, pero logra expresar oraciones)","Moderado (no logra oraciones completas)","Grave (no puede comunicarse)"]},
+    {name:"Discinesia / distonía", opts:[
+      "Ninguna","Leve (no afecta las actividades diarias)","Moderada (interfiere con las actividades diarias)","Grave, con complicaciones médicas secundarias"]},
+    {name:"Inestabilidad de la marcha y ataxia", hint:"En coma: puntuar 3.", opts:[
+      "Normal","Leve, camina sin ayuda","Moderada, camina con ayuda","Grave, no camina"]},
+    {name:"Disfunción de tronco encefálico", hint:"La tabla original la rotula «número de síntomas». Aquí se marca el nivel más alto presente.", opts:[
+      "Ninguna","Paresia de la mirada","Alimentación por sonda","Ventilación mecánica por hipoventilación central"]},
+    {name:"Debilidad", hint:"Fuerza promedio de las 4 extremidades (MRC), redondeada. En coma: puntuar 3.", opts:[
+      "Normal (5/5)","Leve (4/5)","Moderada (3/5)","Grave (≤2/5)"]}
+  ],
+  interpret:t=>({cls:"", txt:t<=4?"0–4: rango «excelente» en estudios de desenlace":t<=9?"5–9: rango «moderado» en estudios de desenlace":"10–27: rango «malo» en estudios de desenlace"})
 }
 };
 
@@ -334,7 +360,7 @@ function bar(html){ const b=$("#bar"); if(!html){ b.hidden=true; bar.last=null; 
 const ROUTES = [
   ["inicio","Inicio"],["edad","Edad corregida"],["pc","Perímetro craneano"],["ant","Antropometría"],["pcrn","PC al nacer"],["finnegan","Finnegan"],["sarnat","Sarnat"],["bind","BIND"],["hitos","Hitos del desarrollo"],["mchat","M-CHAT-R"],["amse","AMSE"],["gmfcs","GMFCS"],
   ["tardieu","Tardieu"],["tono","Ashworth / MRC"],["sprs","SPRS"],["sara","SARA"],["bfm","Burke-Fahn-Marsden"],["ygtss","YGTSS"],
-  ["beighton","Beighton"],["marfan","Marfan"],["pedmidas","PedMIDAS"],["ee","Estado epiléptico"],["gcs","Glasgow"]
+  ["beighton","Beighton"],["marfan","Marfan"],["pedmidas","PedMIDAS"],["ee","Estado epiléptico"],["gcs","Glasgow"],["case","CASE"]
 ];
 function route(){
   const id = (location.hash||"#inicio").slice(1);
@@ -411,6 +437,7 @@ function viewHome(){
     pedmidas:["PedMIDAS","Discapacidad por cefalea en 3 meses, grados I–IV."],
     ee:["Estado epiléptico (HCVB)","Guía 2024 paso a paso: dosis por peso, cronómetro y registro."],
     gcs:["Glasgow pediátrico","Versión lactante y niño, 3–15."],
+    case:["CASE","Severidad de encefalitis autoinmune, 9 ítems, 0–27."],
     edad:["Edad corregida","Cronológica, corregida, postmenstrual y fecha de término."],
     pcrn:["PC al nacer (Alarcón-Pittaluga)","Curva chilena por edad gestacional, 24–42 semanas."],
     hitos:["Hitos del desarrollo","Hitos esperados para la edad (CDC/AAP 2022) y cociente de desarrollo."],
@@ -426,6 +453,7 @@ function viewHome(){
     ["Trastornos del movimiento",["bfm","ygtss","sara"]],
     ["Cefalea",["pedmidas"]],
     ["Tejido conectivo",["beighton","marfan"]],
+    ["Neuroinmunología",["case"]],
     ["Urgencia",["ee","gcs"]]
   ];
   $("#view").innerHTML = `<div class="hero"><svg viewBox="0 0 100 100" width="88" height="88" aria-hidden="true"><g fill="none" style="stroke:var(--accent)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(-3.5 0)"><path d="M46 17 C36 13 24 16 21 27 C12 30 9 42 14 50 C9 58 12 70 21 73 C24 84 36 87 46 83 Z"/><path d="M46 33 C39 34 33 31 31 25"/><path d="M14 50 C22 49 28 46 31 40"/><path d="M46 58 C38 57 31 61 29 68"/></g><g transform="translate(3.5 0)"><path d="M54 17 C64 13 76 16 79 27 C88 30 91 42 86 50 C91 58 88 70 79 73 C76 84 64 87 54 83 Z"/><path d="M54 33 C61 34 67 31 69 25"/><path d="M86 50 C78 49 72 46 69 40"/><path d="M54 58 C62 57 69 61 71 68"/></g></g><circle cx="50" cy="50" r="5" style="fill:var(--coral)"/></svg><span class="w">Escalas Neuropediatría</span><span class="t">Neuropediatría · Universidad de Valparaíso</span></div>
@@ -508,10 +536,11 @@ const KW = {
   tono:"espasticidad tono fuerza ashworth mrc", sprs:"paraparesia espastica hereditaria peh hsp", sara:"ataxia cerebelo",
   bfm:"distonia burke fahn marsden bfmdrs", ygtss:"tics tourette yale", pedmidas:"cefalea migrana jaqueca discapacidad", beighton:"hiperlaxitud laxitud articular hipermovilidad ehlers danlos sed", marfan:"marfan ghent fbn1 aracnodactilia ectopia lentis aorta tejido conectivo envergadura",
   ee:"status estatus convulsion crisis epilepsia benzodiazepina midazolam diazepam lorazepam fenitoina levetiracetam fenobarbital dosis peso hcvb van buren protocolo urgencia",
-  gcs:"glasgow coma conciencia tec trauma urgencia"
+  gcs:"glasgow coma conciencia tec trauma urgencia",
+  case:"encefalitis autoinmune anti nmda nmdar lgi1 mog anticuerpos neuroinmunologia severidad lim"
 };
 
-// ---------- escalas genéricas (SARA, SPRS, Glasgow) ----------
+// ---------- escalas genéricas (SARA, SPRS, Glasgow, CASE) ----------
 function viewScale(id){
   const S = SCALES[id]; const st = ST[id] ||= {v:{}, age:"nino"};
   const optsOf = it => it.opts.map((o,i)=> Array.isArray(o) ? {s:o[0], t:(o.length===2||st.age==="nino"?o[1]:o[2]), n:(it.labels||S.labels)?.[i] ?? o[0]} : {s:i, t:o, n:i});
